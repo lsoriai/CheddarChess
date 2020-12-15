@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script type="text/javascript" src="/site_media/prototype.js"></script>
+<script type="text/javascript" src="/site_media/my_ajax_function.js"></script>
+<script type="text/javascript">
+function federacion(){
+  alert("Federación:");
+  return;
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<br><br><br>
+<h3>{{ title }}</h3>
+<h1><p>Buscar</p></h1><br>
+
+<table cellspacing="2" cellpadding="2" border="0" bgcolor=dddddd>
+<tr>
+<td colspan="2" align="rigth">
+<font color="blue" size="4"><b>Jugadores</b></font>
+</td>
+<td colspan="2">
+</td>
+<td>
+<font color="orange" size="4">
+<!--<select class="col-md-4" id="gamer" name="gamer">
+ {% for jugador in jugadores %} 
+  <option value="{{ jugador.user }}">{{ jugador.user }}</option>
+{% endfor %}
+</select> -->
+<select name="auto" id="auto" onchange="jugadores();">
+<option value="1">Leyre</option>
+<option value="2">Alfonso</option>
+<option value="3">Alberto</option>
+<option value="4">Carlota</option>
+<option value="5">Dario</option>
+</select>
+</font>
+</td>
+</tr>
+<tr>
+<td colspan="2" align="rigth">
+<font color="blue" size="4"><b>Federaciones </b></font>
+</td>
+<td colspan="2">
+</td>
+<td>
+<font color="orange" size="4">
+<select name="auto" id="auto" onchange="federacion();">
+<option value="1">Madrileña</option>
+<option value="2">Catalana</option>
+<option value="3">Valenciana</option>
+</select>
+</font>
+</td>
+</tr>
+</table>
+
+<br><br>
+<div id="capa">
+</div>
+<br><br>
+<!-- texto y botón-->
+<div id="content-div" class="row col-md-8">
+  <a id="search-subjects" class="btn btn-primary">Buscar</a>
+  <div class="col-md-4">
+  <input id="name-student" type="text" class="form-control">
+  </div>
+</div>
+<br><br><br><br>
+<!-- ESTA CAPA ES PARA AJAX-->
+<div id="datos">
+
+</div>
+
+<!--
+<div id="dialog" title="dialog" onchange="mostrarDialog()">
+</div>
+<div id="formulario">
+            <form method="post" id="formdata">
+                <label for="nombre">   Nombre: </label><input type="text" name="nombre" id="nombre" required="required"></br>
+                <label for="apellidos">Apellidos: </label><input type="text" name="apellidos" id="apellidos" required="required"></br>
+                <label for="direccion">Dirección: </label><input type="text" name="direccion" id="direccion" required="required"></br>
+                Género: <br><input type="radio" name="genero" id="hombre" checked="checked"><label for="hombre"> Hombre   </label>
+				<input type="radio" name="genero" id="mujer"><label for="mujer"> Mujer</label><br>
+                <label for="mayor">Es mayor de 18 años: </label><input type="checkbox" name="mayor" id="mayor" required="required"><br>
+                <input type="button" id="botonenviar" value="Enviar">
+            </form>
+        </div>
+        <div id="exito" style="display:none">
+            Sus datos han sido recibidos con éxito.
+        </div>
+        <div id="fracaso" style="display:none">
+            Se ha producido un error durante el envío de datos.
+        </div>
+-->
+
+{% endblock content %}
+
+{% block javascripts %}
+
+
+<script type="text/javascript">
+/*function validaForm(){
+    // Campos de texto
+    if($("#nombre").val() == ""){
+        alert("El campo Nombre no puede estar vacío.");
+        $("#nombre").focus();       // Esta función coloca el foco de escritura del usuario en el campo Nombre directamente.
+        return false;
+    }
+    // Checkbox
+    if(!$("#mayor").is(":checked")){
+        alert("Debe confirmar que es mayor de 18 años.");
+        return false;
+    }
+
+    return true; // Si todo está correcto
+}
+
+$(document).ready( function() {   // Esta parte del código se ejecutará automáticamente cuando la página esté lista.
+    $("#botonenviar").click( function() {     // Con esto establecemos la acción por defecto de nuestro botón de enviar.
+        if(validaForm()){                               // Primero validará el formulario.
+            $.post("archivo.py",$("#formdata").serialize(),function(res){
+                $("#formulario").fadeOut("slow");   // Hacemos desaparecer el div "formulario" con un efecto fadeOut lento.
+                if(res == 1){
+                    $("#exito").delay(500).fadeIn("slow");      // Si hemos tenido éxito, hacemos aparecer el div "exito" con un efecto fadeIn lento tras un delay de 0,5 segundos.
+                } else {
+                    $("#fracaso").delay(500).fadeIn("slow");    // Si no, lo mismo, pero haremos aparecer el div "fracaso"
+                }
+            });
+        }
+    });    
+});
+
+
+function mostrarDialog() {
+ 
+// La ruta Ajax
+var url = 'ruta a datos';
+ 
+// mostrar un imágenes de cargando a través de CSS
+var dialog = $('<div class="loading" style="display: none;"></div>').appendTo('body');
+// abrir el dialog
+dialog.dialog({
+
+// añadir un listener para borrar el dialog al cerrarlo
+close: function(event, ui) {
+ 
+// borra el div con sus eventos y datos
+dialog.remove();
+},
+modal: true,
+title: 'titulo de la ventana',
+width:918,
+height:450
+});
+ 
+// Cargar contenido con Ajax en la ventana
+dialog.load(
+url,
+{}, // Datos para enviar (en este caso, ninguno)
+function (responseText, textStatus, XMLHttpRequest) {
+// Quitar el class de “cargando”
+dialog.removeClass('loading');
+}
+);
+}
+    $(document).ready(function() {
+      // Cuando cambie tu select
+      $("#id_select").on("change", hacerAlgo);
+    });
+
+    function hacerAlgo() {
+      var opcionSeleccionada = $("#id_select").val();
+      var request = $.ajax({
+        type: "GET",
+        url: "{% url 'hacer_algo' %}",
+        data: {
+            "opcion": opcionSeleccionada
+        }
+      });
+      request.done(function(response) {
+          // En el DIV que quieres poner el contenido
+          $("#capa").html(response.contenido);
+      });
+    }
+
+    $(document).ready(function(){
+      $("p").click(function(){
+        $(this).hide();
+		alert("hola1");
+      });
+    });
+
+
+
+   $('select').on('change',inicio);  //al cambiar el combobox que coja el id seleccionado
+   function inicio()
+   {
+   alert("hola 2");
+   var id = $(this).val();
+   console.log(id);
+   alert(id);
+   $.ajax({
+       data: {'id':id}, // datos a pasar es un diccionario para enviar a la url
+	   url: '/busqueda_ajax/', //vista para responder al servidor en ésta url
+	   type: 'get',
+	   success: function(data){
+	      console.log(data);
+		  var html = ""
+		  for(var i=0;i<data.length; i++)
+		  {
+		      html += '<ul><li>'+data[i].fields.name+'</li><li>'+data[i].fields.publication_date+'</li><ul>'
+	      }
+		  $('#datos').html(html);
+   });
+   
+   }
+ 
+   $('select').change function (){
+   var id = $(this).val();
+   console.log(id);
+   alert(id);
+   $.ajax({
+       data: {'id':id}, // datos a pasar es un diccionario para enviar a la url
+	   url: '/busqueda_ajax/', //vista para responder al servidor en ésta url
+	   type: 'get',
+	   success: function(data){
+	      console.log(data);
+		  var html = ""
+		  for(var i=0;i<data.length; i++)
+		  {
+		      html += '<ul><li>'+data[i].fields.name+'</li><li>'+data[i].fields.publication_date+'</li><ul>'
+	      }
+		  $('#datos').html(html);
+   });
+   
+   }
+
+   $(document).ready(function (){
+   //verificamos cuando se pulsa el click en el botón
+   $('#content-div').on('click','#search-subjects', function(){ 
+       var name = $('#name-student').val();
+	   alert("hola");
+   
+   $.get('{% url "course:listar" %}', {name:name}, function(data){
+       
+	   console.log(name);
+	     var html = ""
+		  for(var i=0;i<data.length; i++)
+		  {
+		      html += '<tr><td>'+data[i].fields.name+'</td><td>'+data[i].fields.publication_date+'</td><tr>';
+	      }
+		  $('#datos').html(html);
+   });
+   
+   });
+   */
+   </script>
+ 
+
+
+{% endblock %}

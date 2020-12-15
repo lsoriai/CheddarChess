@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>Ajedrez</title>
+<link rel="stylesheet" href="{% static 'css/chessboard-0.3.0.css' %}">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>-->
+<script src="{% static 'ajedrez_app/chessboardjs/js/chessboard-0.3.0.js' %}"></script> <!-- la ruta buena -->
+<script src="{% static 'ajedrez_app/chessboardjs/js/chess.js' %}"></script> <!-- la ruta buena -->
+{% endblock %}
+
+{% block content %}
+<center>
+<br><br><br>
+<font color="navy" size="5" face="Comic Sans MS,Arial,Verdana">PARTIDAS EN JUEGO MAS VISTAS:</font>
+<br>
+
+<!-- tabla principal -->
+<table border="0" width="900">
+<tr>
+<td>
+
+<table cellspacing="5" cellpadding="5" border="0">
+<tr>
+<!--<td><input type="button" id="startBtn" class="btn btn-primary" value="Iniciar Partida"/></td> 
+<td><input type="button" id="clearBtn" class="btn btn-success" value="Limpiar" /></td>--> 
+<!--<td><input type="button" id="destroyBtn" class="btn btn-info" value="Ocultar Tablero" /></td>--> 
+<!--<td><input type="button" id="showOrientationBtn" class="btn btn-warning" value="Orientación actual" onclick="javascript:orientacionActual();"/></td> -->
+<!--<td><input type="button" id="flipOrientationBtn" class="btn btn-danger" value="Cambiar Orientación" /></td>--> 
+<!--<td><input type="button" id="startPositionBtn" class="btn btn-primary" value="Posición Inicial" /></td> -->
+<!--<td><input type="button" id="whiteOrientationBtn" class="btn btn-warning" value="Blancas" /></td> 
+<td><input type="button" id="blackOrientationBtn" class="btn btn-info" value="Negras" /></td>-->
+<!--<td><input type="button" id="move1Btn" class="btn btn-success" value="e2-e4" /></td> 
+<td><input type="button" id="move2Btn" class="btn btn-primary" value="d2-d4, g8-f6" /></td> -->
+<!--<td><input type="button" id="cancelar" class="btn btn-success" value="Cancelar Partida" onclick="javascript:cancelarPartida();"/></td> -->
+<!--<td><input type="button" id="rendirse" class="btn btn-primary" value="Rendirse" onclick="javascript:rendirse();"/></td> -->
+</tr>
+</table>
+<br>
+
+<table border="2" align="center">
+<tr>
+<td><div id="board2" style="width: 200px; display: none"></div></td>
+<td><div id="board3" style="width: 200px; display: none"></div></td>
+<td><div id="board4" style="width: 200px; display: none"></div></td>
+<td><div id="board5" style="width: 200px; display: none"></div></td>
+<td><div style="clear:both"></div></td>
+</tr>
+<tr>
+{% if numpartidas == 1 %}  
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+{% if numpartidas == 2 %}  
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+{% if numpartidas == 3 %}  
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+{% if numpartidas == 4 %}  
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+
+<!--<font color="black" size="4"> Con Tiempo: </font><font color="blue" size="4">[ {{ tiempo }} ] </font>-->
+<!--{% if estado == "en espera" %}
+<font color="black" size="4"> Estado: </font><font color="red" size="4">[ Esperando respuesta de {{ contrincante }} para comenzar ] </font> 
+{% endif %} -->
+
+<!--<font color="black" size="4"> Mensaje: </font><font color="green" size="4"><div id="mensajes" name="mensajes"></div></font>--> 
+</tr>
+<tr>
+<td><div id="board6" style="width: 200px;display: none"></div></td>
+<td><div id="board7" style="width: 200px;display: none"></div></td>
+<td><div id="board8" style="width: 200px;display: none"></div></td>
+<td><div id="board9" style="width: 200px;display: none"></div></td>
+<td><div style="clear:both"></div></td>
+</tr>
+<tr>
+{% if numpartidas == 5 %}  
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+{% if numpartidas == 6 %}  
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+{% if numpartidas == 7 %} 
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+{% if numpartidas == 8 %} 
+<td>
+<font color="black" size="4"> Blancas:</font><font color="blue" size="4">[ {{ user.username }} ] </font><br>
+<font color="black" size="4"> Negras: </font><font color="green" size="4">[ {{ contrincante }} ] </font><br>
+<input type="button" id="startBtn" class="btn btn-primary" value="Entrar"/>
+</td>
+{% endif %}
+<!--<font color="black" size="4"> Con Tiempo: </font><font color="blue" size="4">[ {{ tiempo }} ] </font>-->
+<!--{% if estado == "en espera" %}
+<font color="black" size="4"> Estado: </font><font color="red" size="4">[ Esperando respuesta de {{ contrincante }} para comenzar ] </font> 
+{% endif %} -->
+<!--<font color="black" size="4"> Mensaje: </font><font color="green" size="4"><div id="mensajes" name="mensajes"></div></font>--> 
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+<br><br><br><br>
+
+
+{% if numpartidas == None %}  
+   <font color="navy" size="4" face="Comic Sans MS,Arial,Verdana">NO HAY PARTIDAS EN JUEGO</font>
+{% endif %}
+</center>
+
+
+<!-- fondo de color gris claro -->
+<div style="height:134px; background-color:#EAECEE;" >
+     <div style="min-height:134px; height:134px; background-color:#EAECEE;">  
+     </div> 
+</div> 
+
+<!--------------- fin del código HTML5  -->
+
+
+
+
+<script>
+function cancelarPartida(){
+   document.getElementById('mensajes').innerHTML='Cancelo la partida';
+}
+
+function rendirse(){
+   document.getElementById('mensajes').innerHTML='Me rindo';
+}
+
+/*function orientacionActual(){
+  var fichas=board2.orientation();
+  if (fichas=="white"){
+      fichas="Blancas";
+  }
+  else
+  {
+      fichas="Negras";
+  }
+  document.getElementById('mensajes').innerHTML="Orientación Abajo las fichas: "+fichas;
+} */
+</script>
+
+<script>
+//basado en chess.js
+//var board = null   ojo error
+//var game = new Chess() ojo error
+var $status = $('#status')
+var $fen = $('#fen')
+var $pgn = $('#pgn')
+
+//función inicial de carga y configuración del ajedrez
+var init = function() {
+  var board2 = ChessBoard('board2', {
+  draggable: true,
+  dropOffBoard: 'trash',
+  sparePieces: true,  //mostrar las piezas de repuesto
+  moveSpeed: 'slow',  //interviene en la velocidad de animación
+  snapbackSpeed: 500, //interviene en la velocidad de animación
+  snapSpeed: 100      //interviene en la velocidad de animación   
+}) 
+
+$('#startBtn').on('click', board2.start);
+
+$('#clearBtn').on('click', board2.clear);
+
+$('#destroyBtn').on('click', board2.destroy);
+
+$('#startPositionBtn').on('click', board2.start);
+
+$('#move1Btn').on('click', function() {
+  board2.move('e2-e4');
+});
+
+$('#move2Btn').on('click', function() {
+  board2.move('d2-d4', 'g8-f6');
+});
+
+$('#flipOrientationBtn').on('click', function() {
+ board2.flip;
+});
+
+$('#whiteOrientationBtn').on('click', function() {
+  board2.orientation('white');
+  board3.orientation('white');
+  board4.orientation('white');
+  board5.orientation('white');
+  board6.orientation('white');
+  board7.orientation('white');
+  board8.orientation('white');
+  board9.orientation('white');
+});
+
+$('#blackOrientationBtn').on('click', function() {
+ board2.orientation('black');
+ board3.orientation('black');
+ board4.orientation('black');
+ board5.orientation('black');
+ board6.orientation('black');
+ board7.orientation('black');
+ board8.orientation('black');
+ board9.orientation('black');
+});
+
+$('#showOrientationBtn').on('click', function() {
+  var fichas=board2.orientation();
+  if (fichas=="white"){
+      fichas="Blancas";
+  }
+  else
+  {
+      fichas="Negras";
+  }
+  document.getElementById('mensajes').innerHTML="Orientación Abajo las fichas: "+fichas;
+  
+});
+
+$('#posicionBtn').on('click', function() {
+  var fila=document.getElementById("fila").value;
+  var columna=document.getElementById("columna").value;
+  var fila1=document.getElementById("fila1").value;
+  var columna1=document.getElementById("columna1").value;
+  var cadena=columna+fila+"-"+columna1+fila1;
+  //alert("Posición: : "+cadena);
+  board2.move(cadena);
+});
+
+var onDragStart = function(source, piece, position, orientation) {
+  if (game.game_over() === true ||
+      (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+    return false;
+  }
+};
+
+var onDrop = function(source, target) {
+  // ver si el movimiento es legal 
+  var move = game.move({
+    from: source,
+    to: target,
+    promotion: 'q' // Siempre promover a una reina por simplicidad.
+  });
+
+  // movimiento ilegal
+  if (move === null) return 'snapback';
+
+  updateStatus();
+};
+
+// no recoger las piezas hasta que el juego haya terminado 
+var onDragStart = function(source, piece, position, orientation) {
+  if (game.game_over() === true ||
+      (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+    return false;
+  }
+};
+
+// actualizar la posición del tablero después de la pieza de ajuste Para enroque, en pasante, promoción de peones.
+var onSnapEnd = function() {
+  board2.position(game.fen());
+};
+
+var updateStatus = function() {
+  var status = '';
+
+  var moveColor = 'White';
+  if (game.turn() === 'b') {
+    moveColor = 'Black';
+  }
+
+  // jakemate?
+  if (game.in_checkmate() === true) {
+    status = 'Game over, ' + moveColor + ' is in checkmate.';
+  }
+
+  // draw?
+  else if (game.in_draw() === true) {
+    status = 'Game over, drawn position';
+  }
+
+  // todavia hay juego
+  else {
+    status = moveColor + ' to move';
+
+    // jaque?
+    if (game.in_check() === true) {
+      status += ', ' + moveColor + ' is in check';
+    }
+  }
+
+  statusEl.html(status);
+  fenEl.html(game.fen());
+  pgnEl.html(game.pgn());
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+var board3 = ChessBoard('board3', {
+  position: 'start',
+  showNotation: false
+});
+
+var board4 = ChessBoard('board4', {
+  position: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R',
+  showNotation: false
+});
+
+var board5 = ChessBoard('board5', {
+  position: 'r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1',
+  showNotation: false
+});
+
+var board6 = ChessBoard('board6', {
+  position: 'start',
+  showNotation: false
+});
+
+var board7 = ChessBoard('board7', {
+  position: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R',
+  showNotation: false
+});
+
+var board8 = ChessBoard('board8', {
+  position: 'r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1',
+  showNotation: false
+});
+
+var board9 = ChessBoard('board9', {
+  position: 'r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1',
+  showNotation: false
+});
+
+};//init
+
+$(document).ready(init); 
+
+</script>
+
+
+{% endblock content %}

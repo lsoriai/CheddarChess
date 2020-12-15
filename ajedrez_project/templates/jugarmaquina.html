@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>CheddarChess</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="{% static 'css/chessboard-0.3.0.css' %}">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="{% static 'ajedrez_app/chessboardjs/js/chessboard-0.3.0.js' %}"></script> <!-- la ruta buena estática -->
+<script src="{% static 'ajedrez_app/chessboardjs/js/chess.js' %}"></script> 
+<script src="{% static 'ajedrez_app/chessboardjs/js/leyre.js' %}"></script>
+<script src="{% static 'ajedrez_app/chessboardjs/js/stockfish.js' %}"></script>
+
+<!--anulada la barra vertical del scroll -->
+<style type="text/css">
+	body
+	{
+	overflow-y: hidden;
+	overflow-x: scroll;
+	}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<br><br><br>
+<center>
+<font color="#696969" size="6" face="Comic Sans MS,Arial,Verdana">PARTIDA:</font>
+<br>
+<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">Blancas:</font><font color="blue" size="5">&nbsp;{{ user.username }}</font>
+<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">Negras: </font><font color="green" size="5"> La máquina</font>
+<br><br>
+
+<table border="0">
+<tr>
+<td>
+<table border="0">
+<tr>
+  <td><input type="button" id="whiteOrientationBtn" class="btn btn-warning" value="Blancas" /></td> 
+  <td><input type="button" id="blackOrientationBtn" class="btn btn-info" value="Negras" /></td> 
+  <td width="160"></td> 
+  <td><input type="button" id="startBtn" class="btn btn-primary" value="Iniciar Partida"  onclick="javascript:iniciarPartida();"/></td> 
+  <td><input type="button" id="cancelar" class="btn btn-success" value="Cancelar Partida" onclick="javascript:cancelarPartida();" style="display: none;"/></td> <!-- de inicio aparece como oculto -->
+</tr>
+</table>
+
+<hr style="background-color: orange; height: 2px; border: 1; width:100%;"> 
+
+<table border="0" align="center">
+<tr>
+  <td>
+     <div id="board2" style="width: 430px">
+	 </div>
+  </td>
+  <td>
+     <div style="clear:both"></div>
+  </td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+<br>
+<table>
+<tr>
+<td>
+<table border="1" width="560" height="130">
+<tr>
+  <td>
+    <font color="blue"  size="3">Estado:</font>
+	<font color="black" size="3">
+	   <div id="status">Blancas mueven</div>
+	</font>
+  </td>
+</tr>
+<tr>
+  <td>
+    <font color="blue"  size="3">Posición FEN:</font>
+	<font color="black" size="3">
+	   <div id="fen">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1</div>
+	</font>
+  </td>
+</tr>
+<tr>
+  <td>
+    <font color="blue" size="3"></font>
+	<font color="black" size="3">
+	   <div id="pgn"></div>
+	</font>
+ </td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br>
+
+<!-- fondo de color gris claro -->
+<div style="height:14px; background-color:#EAECEE;" >
+     <div style="min-height:14px; height:14px; background-color:#EAECEE;">  
+     </div> 
+</div> 
+</center>
+
+<!--------------- fin del código HTML5  -->
+  
+<!-- --------------------------------------------------------------------------------------------------- -->
+  
+  <script language="javascript" type="text/javascript">
+	//PASO 1
+	//Primero creamos un objecto WebSocket para el servidor
+	//para una comunicación bidirecional, full-duplex, con baja latencia y que se basa en el protocolo TCP. 
+	//Los Websockets están siendo estandarizado por la W3C mediante el Websocket API.
+	
+	var wsUri = "wss://echo.websocket.org/";  
+	var url="ws://localhost:8000/jugar1/";  //var wsUri='ws://' + window.location.host + '/jugar1/';   
+	var url="ws://localhost:8000/stockFish_init/"; 
+    var output;
+	var cadena="";
+	var socket = new WebSocket(url); //creamos un nuevo cliente de websocket estableciendo conexión con el servidor
+	/*
+	0	CONNECTING	Socket creado. pero no abierto
+    1	OPEN	    conexión abierta y preparada
+    2	CLOSING	    conexión se está cerrando
+    3	CLOSED	    la conexión está cerrada
+	*/
+	
+	var estado=socket.readyState;
+	var cadestado="Estado: "+estado+ " CONNECTING";
+	if (estado == 0) { 
+	   cadena="Estado: "+estado+ " CONECTADO \n";
+	   document.getElementById("textarea1").innerHTML +=cadena;
+	}
+	if (estado == 1) { 
+	    cadena="Estado: "+estado+ " ABIERTO \n";
+	    document.getElementById("textarea1").innerHTML +=cadena;
+	}
+	if (estado == 2) { 
+	   cadena="Estado: "+estado+ " CERRANDO \n";
+	   document.getElementById("textarea1").innerHTML +=cadena;
+	}
+	if (estado == 3) { 
+	   cadena="Estado: "+estado+ " CERRADO \n";
+	   document.getElementById("textarea1").innerHTML +=cadena;
+	   }
+	
+	if (socket.readyState == WebSocket.OPEN) {
+	    cadena="WebSockets abierto \n";
+	    document.getElementById("textarea1").innerHTML +=cadena;
+        socket.onopen();
+    }else{
+	  cadena="WebSockets cerrado \n";
+	  document.getElementById("textarea1").innerHTML +=cadena;
+	}
+
+	$('#formulario').submit(function(e){
+		e.preventDefault();
+		datos = {
+			'nombre' : $('input[name="nombre"]').val(),
+			'mensaje': $('input[name="texto"]').val()
+		}
+		socket.send(JSON.stringify(datos));
+		$('#formulario')[0].reset();
+	});
+	
+function websocket_msj_recibido(e){
+	datos = JSON.parse(e.data);
+	codigo = '<div class="col s12">'				+
+				'<div class="nombre">'				+
+					'<h4>'+ datos.nombre +'</h4>'	+
+				'</div>'							+
+				'<div class="contenido">'			+
+					'<p>'+ datos.mensaje +'</p>'	+
+				'</div>'							+
+			'</div>';
+	$('#conversacion').append(codigo);
+}
+	
+  function init()
+  {
+	cadena="entra en init() \n";
+	document.getElementById("textarea1").innerHTML +=cadena;
+    output = document.getElementById("output");
+    testWebSocket();
+  }
+
+  function stop() {
+		cadena="entra en stop \n";
+	    document.getElementById("textarea1").innerHTML +=cadena;
+        //websocket.send('stop'); //enviar el mensaje
+		socket.send('stop'); //enviar el mensaje
+  }
+	
+  function testWebSocket()
+  {
+    cadena="TEST DEL SOCKET \n";
+	document.getElementById("textarea1").innerHTML +=cadena;
+  //definición de las funciones callback que controlan el intercambio de información con el websocket
+  //es decir los disparadores de eventos
+	try{
+    websocket = new WebSocket(wsUri); //único parámetro importante
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+	} catch(exception){
+   		 escribir('Error:'+exception);
+    }
+  }
+
+  function onOpen(evt)
+  {
+    // Cuando un socket ha sido abierto
+	cadena="ONOPEN  -  WEBSOCKET CONECTADO - PARTIDA PREPARADA \n";
+	document.getElementById("textarea1").innerHTML +=cadena;
+    escribir("entra en ONOPEN - WEBSOCKET CONECTADO");
+    enviar("SE VA A INICIAR LA PARTIDA");
+	
+	var estado1=websocket.readyState;
+	if (estado1 == 0) { 
+	   cadena="Estado en Open: "+estado1+ " CONECTANDO \n";
+	   document.getElementById("textarea1").innerHTML +=cadena;
+	   escribir("Estado en Open: "+estado1);
+	}
+	if (estado1 == 1) { 
+	    cadena="Estado en Open: "+estado1+ " ABIERTO \n";
+	    document.getElementById("textarea1").innerHTML +=cadena;
+		escribir("Estado en Open: "+estado1);
+	}
+	if (estado1 == 2) { 
+	   cadena="Estado en Open: "+estado1+ " CERRANDO \n";
+	   document.getElementById("textarea1").innerHTML +=cadena;
+	   escribir("Estado en Open: "+estado1);
+	}
+	if (estado1 == 3) { 
+	   cadena="Estado en Open: "+estado1+ " CERRADO \n";
+	   document.getElementById("textarea1").innerHTML +=cadena;
+	   escribir("Estado en Open: "+estado1);
+	   }
+  }
+
+  function onClose(evt)
+  {
+    //cuándo se cierra el Websocket.
+	//location.reload();
+	cadena="ONCLOSE \n";
+	document.getElementById("textarea1").innerHTML +=cadena;
+    escribir("DESCONECTADO EL WEBSOCKET");
+	escribir("Estado en Close: "+websocket.readyState);
+	websocket.close();
+  }
+
+  function onMessage(evt)
+  {
+    //cuando recibimos un mensaje por el Websocket.
+	//location.reload();  ojo el parpadeo se nota mucho
+	cadena="Recibe mensaje en onMessage "+evt.data+"\n";
+	document.getElementById("textarea1").innerHTML +=cadena;
+    escribir('<span style="color: blue;">RECIBIMOS MENSAJE DEL WEBSOCKET->RESPUESTA: <b>' + evt.data+'</b></span>');
+   }
+
+  function onError(evt)
+  {
+	cadena="entra en OnError \n";
+	document.getElementById("textarea1").innerHTML +=cadena;
+    // si se produce un error en el Websocket.
+    escribir('<span style="color: red;">ERROR:</span> ' + evt.data);
+  }
+
+  function enviar(message)
+  {
+	cadena="entra en enviar con mensaje "+message+"\n";
+	document.getElementById("textarea1").innerHTML +=cadena;
+    escribir("ENVIADO: " + message);
+    websocket.send(message); //enviar el mensaje
+  }
+
+  function escribir(message)
+  {
+    var pre = document.createElement("p");
+    pre.style.wordWrap = "break-word";
+    pre.innerHTML = message;
+    output.appendChild(pre);
+  }
+
+  //Paso 2 se carga la función init()
+  window.addEventListener("load", init, false);
+		
+  </script>
+   
+<script>
+
+   function cancelarPartida(){
+     document.getElementById('status').innerHTML='Partida cancelada por: [ {{ user.username }} ]';
+     board.clear(true);
+     document.getElementById('fen').innerHTML='';
+	 location.href ="http://localhost:8000/";
+   }
+</script>
+
+<script>
+
+var board = null;
+var game = new Chess();
+
+//función inicial de carga y configuración del ajedrez
+var init = function() {
+  
+  //configuración del tablero del juego
+  var board2 = ChessBoard('board2', {
+  draggable: true,
+  dropOffBoard: 'trash',
+  sparePieces: true,  //mostrar las piezas de repuesto
+  showNotation: true, //nueva
+  moveSpeed: 'slow',  //interviene en la velocidad de animación
+  snapbackSpeed: 500, //interviene en la velocidad de animación
+  snapSpeed: 100,      //interviene en la velocidad de animación   
+  onDragStart: onDragStart,
+  onDrop: onDrop,
+  onSnapEnd: onSnapEnd
+}) 
+
+board=board2;
+
+$('#startBtn').on('click', board2.start);
+
+$('#whiteOrientationBtn').on('click', function() {
+  board2.orientation('white');
+});
+
+$('#blackOrientationBtn').on('click', function() {
+ board2.orientation('black');
+});
+
+$('#showOrientationBtn').on('click', function() {
+  var fichas=board2.orientation();
+  if (fichas=="white"){
+      fichas="Blancas";
+  }
+  else
+  {
+      fichas="Negras";
+  }
+  document.getElementById('mensajes').innerHTML="Orientación Abajo las fichas: "+fichas;
+  
+});
+
+function onDragStart (source, piece, position, orientation) {
+  // no recoja piezas si el juego ha terminado
+  if (game.game_over()) return false
+
+  // solo recoge piezas para blanco
+  if (piece.search(/^b/) !== -1) return false
+}
+
+function makeRandomMove () {
+  var possibleMoves = game.moves()
+
+  // juego terminado
+  if (possibleMoves.length === 0) {
+     document.getElementById('status').innerHTML='<b>Juego Finalizado. Jaque Mate. Ganan Blancas</b>';
+	 document.getElementById('status').style.color="red";
+	 var d = document.getElementById("rendirse");
+     d.className = d.className + " disabled";
+	 var e = document.getElementById("cancelar");
+     e.className = e.className + " disabled";
+     return;
+	 }
+
+  var randomIdx = Math.floor(Math.random() * possibleMoves.length);
+  game.move(possibleMoves[randomIdx]);
+  board.position(game.fen());
+  clickShowPositionBtn ();
+}
+
+function onDrop (source, target) {
+  
+  clickShowPositionBtn();
+  // ver si el movimiento es legal
+  var move = game.move({
+    from: source,
+    to: target,
+    promotion: 'q' // siempre promueve a una reina, por ejemplo, la simplicidad
+  })
+  
+  // movimiento ilegal
+  if (move === null) return 'snapback'
+
+  // make random legal move for black
+  window.setTimeout(makeRandomMove, 250);
+  updateStatus();
+}
+
+// update the board position after the piece snap
+// for castling, en passant, pawn promotion
+function onSnapEnd () {
+  board.position(game.fen())
+}
+
+//posicion actual
+function clickShowPositionBtn () {
+  var saved_positions = game.fen();  
+  document.getElementById('fen').innerHTML=saved_positions;
+  //document.getElementById('pgn').innerHTML=board.position(saved_positions,false); // no traduce bien la cadena fen a pgn la animación es true
+  updateStatus();
+}
+
+function updateStatus () {
+  var status = '';
+  var moveColor = 'Blancas';
+  if (game.turn() === 'b') {
+    moveColor = 'Negras';
+  }
+  status = moveColor + ' mueven';
+  document.getElementById('status').innerHTML=status;
+}
+
+};//init
+
+$(document).ready(init); 
+
+</script>
+
+<script>
+$.ajax({
+       url: '/ajax',
+       dataType : 'json',
+       cache: false,
+       success: function(data) {
+           alert('objeto ajax '+data.ajax_respuesta);
+       }
+});
+
+function iniciarPartida() {
+document.getElementById('whiteOrientationBtn').style.display = "none";
+document.getElementById('blackOrientationBtn').style.display = "none";
+document.getElementById('startBtn').style.display = "none";
+document.getElementById('cancelar').style.display = "block";
+}
+
+</script>
+
+{% endblock content %}

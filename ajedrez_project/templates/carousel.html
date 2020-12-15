@@ -1,0 +1,85 @@
+{% load staticfiles %}
+{% block content %}
+<!-- carousel inicio-->
+<br><br>
+<center>
+{% if not request.user.is_authenticated %}
+
+<br><br>
+<center>
+<!--<img src="{% static 'ajedrez_app/bootstrap/imagenes/queso.jpg'%}" height='34' width='34' >
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/queso1.jpg'%}" height='34' width='34' >
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/queso2.png'%}" height='34' width='34' >
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/queso3.jpg'%}" height='34' width='34' >
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/1.png'%}" height='34' width='34' >
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/2.png'%}" height='34' width='34' >
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/uno.png'%}" height='34' width='34' >
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/dos.png'%}" height='34' width='34' >-->
+<br><br>
+<font color="#696969" size="7" face="Comic Sans MS,Arial,Verdana">CHEDDARCHESS</font>
+<br><br>
+</center>
+<br>
+<div class="row-fluid">
+    <div class="span2">&nbsp;</div>
+    <div class="span8">
+        <div id="myslide" class="carousel slide carousel-fade" data-ride="carousel" data-interval="2000">
+            <div class='carousel-outer'>
+                <ol class="carousel-indicators">
+                    <li data-target="#myslide" data-slide-to="0" class="active"><font color="white" size="5"></font></li>
+                    <li data-target="#myslide" data-slide-to="1"><font color="white" size="5"></font></li>
+                    <li data-target="#myslide" datas-lide-to="2"><font color="white" size="5"></font></li>
+                    <li data-target="#myslide" data-slide-to="3"><font color="white" size="5"></font></li>
+                </ol>
+                <div class="carousel-inner" role="listbox">
+                    <div class="item active">
+                        <ul>
+                            <li>
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/1.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:3px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/2.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:3px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/3.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:3px solid">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="item carousel-item">
+                        <ul>
+                            <li>
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/3.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/4.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/5.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="item">
+                        <ul>
+                            <li>
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/5.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/6.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/7.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="item"> 
+                        <ul>
+                            <li>
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/7.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/8.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                                <img src="{% static 'ajedrez_app/bootstrap/imagenes/9.jpg'%}" alt="" class="img-circle" width="240" height="240" style="border:5px solid">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div> <!-- outer -->
+            <!-- Controls -->
+            <a href="#myslide" data-slide="prev" class="left carousel-control" role="button"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <a href="#myslide" data-slide="next" class="right carousel-control" role="button"><span class="glyphicon glyphicon-chevron-right"></span></a>
+        </div>
+    </div>
+    <div class="span2">&nbsp;</div>
+</div>
+</center>	
+
+<!-- carousel fin -->
+{% endif %}
+
+{% endblock content %}

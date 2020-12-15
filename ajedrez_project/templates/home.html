@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>Ajedrez</title>
+<link rel="stylesheet" href="{% static 'css/chessboard-0.3.0.css' %}">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="{% static 'ajedrez_app/chessboardjs/js/chessboard-0.3.0.js' %}"></script> 
+<script src="{% static 'ajedrez_app/chessboardjs/js/chess.js' %}"></script> 
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'css/chat.css' %}"> 
+{% endblock %}
+
+{% block content %}
+<br>
+{% include "carousel.html" %}
+</div>
+ 
+<!-- bloque usuarios autorizados -->
+{% if request.user.is_authenticated %}
+<center>
+<table border="0" width="1960" height="116">
+<tr>
+<td align="center">
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/claudia.JPG'%}" height='100' width='80' >
+&nbsp;&nbsp; <font color="#696969" size="6" face="Comic Sans MS,Arial,Verdana">[ {{ user.username }} ] </font>
+&nbsp; <img src="{% static 'ajedrez_app/bootstrap/imagenes/españa.jpg'%}" height='90' width='60' >
+<font color="navy" size="5">&nbsp; {{federacion}} &nbsp;</font>
+<font color="navy" size="5" face="Comic Sans MS,Arial,Verdana">&nbsp; ELO:</font><font color="green" size="5">&nbsp;[ {{ elo }} ] </font>
+</td>
+<td align="center"> 
+&nbsp;<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">Total Partidas:&nbsp </font><font color="black" size="5">{{ total }}</font>
+&nbsp;<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">&nbsp Victorias: &nbsp </font><font color="black" size="5">{{ ganadas }}</font>
+&nbsp;<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">&nbsp Derrotas: &nbsp </font><font color="black" size="5">{{ perdidas }}</font>
+&nbsp;<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">&nbsp Tablas: &nbsp </font><font color="black" size="5">{{ empatadas }}</font>
+</td>
+
+<td align="center">
+<table>
+<tr>
+<td>
+ <font color="green" size="5">
+ <form name="form_reloj">
+   <input type="text" name="reloj" size="8">
+  </form>
+</font>
+<font color="black" size="3"><div id="RELOJ"></div></font></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</center>
+<center>
+<hr style="background-color: orange; height: 2px; border: 1; width:90%;"> 
+<table border="0" width="1960">
+<tr>
+<td width="1306" align="center">
+<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">JUGADORES CONECTADOS:</font>
+<input id="refresco" type="button" class="btn btn-warning" value="Refrescar" onclick="refrescar();">
+</td>
+<td align="center">
+<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">CHAT PÚBLICO</font>
+</td>
+</tr>
+</table>
+</center>
+<br>
+<center>
+
+<div id="capatabla" name="capatabla">
+<table border="0" width="1960" id="tabla" name="tabla">
+<tr>
+<td width="1306"> 
+  <table border="1" class="table table-hover" bordercolor="orange" cellspacing="1" cellpadding="1" id="ranking">
+  <thead> 
+  <tr>
+	<th class="bg-info">Posición</th>
+	<th class="bg-info">Nombre del Jugador</th>
+	<th class="bg-info">Foto</th>
+	<th class="bg-info">País</th>
+	<th class="bg-info">ELO</th>
+	<th class="bg-info">Ganadas</th>
+	<th class="bg-info">Perdidas</th>
+	<th class="bg-info">Empatadas</th>
+	<th class="bg-info">Conectado</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+	{% for fila in usuarios %}
+	<td class="#9c9c9c">{{ forloop.counter }}</td>
+	<td class="#9c9c9c">{{ fila.user }}</td>
+	<td class="#9c9c9c"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='20' width='20' ></td>
+	<td class="#9c9c9c"><img src="{% static 'ajedrez_app/bootstrap/imagenes/españa.jpg'%}" height='20' width='20' ></td>
+	<td class="#9c9c9c"><b><font size="4" color="#696969"> {{ fila.elo }} </font></b></td>
+	<td class="#9c9c9c">{{ fila.ganadas }}</td> 
+	<td class="#9c9c9c">{{ fila.perdidas }}</td>
+	<td class="#9c9c9c">{{ fila.empatadas }}</td>
+	{% if fila.conectado == True %}  
+	   <td class="#9c9c9c">SI</td>
+	{% endif %}
+	{% if fila.conectado == False %}  
+	   <td class="#9c9c9c">NO</td>
+	{% endif %}
+  </tr>
+	{% endfor %}
+  </tbody>
+ </table>
+</div>
+ 
+ </td>
+<td align="center"> 
+
+<!-- EL CHAT -->
+<table border="0">
+<tr>
+   <td align="center">
+   <br>
+   <div class="form-group">
+	  <input type="text" id="room-name-input" name="room-name-input" size="24" maxlength="24" value="publica" style="display:none">
+   </div>
+	<div class="panel panel-primary">
+        <div class="panel-heading"><span class="glyphicon glyphicon-comment"></span> Sala Pública</div>
+	    <div id="messages" class="form-control" style="width: 540px; height: 290px; overflow: scroll;text-align: left"></div>
+	</div>
+	<input type="text" class="form-control" id="message_text" placeholder="teclea tu mensaje aquí..." size="52" /> 
+	<input id="chat-message-submit" type="button" class="btn btn-warning" value="Enviar" onclick="enviarmensaje();">
+   <br>
+  </td>
+</tr>
+</table>
+<!---- fin chat-->
+</td>
+</tr>
+</table>
+</center>
+{% endif %}
+
+{% if request.user.is_authenticated %}
+  {% if usuarios.has_other_pages %}
+<font size="3">
+  <ul class="pagination" style="padding-left:80px;">
+    {% if usuarios.has_previous %}
+      <li><a href="?page={{ usuarios.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in usuarios.paginator.page_range %}
+      {% if usuarios.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if usuarios.has_next %}
+      <li><a href="?page={{ usuarios.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+</font>	
+{% endif %}
+{% endif %}
+
+<!-- fondo de color gris claro -->
+<div style="height:370px; background-color:#EAECEE;" >
+     <div style="min-height:370px; height:370px; background-color:#EAECEE;">  
+     </div> 
+</div> 
+
+<!--------------- fin del código HTML5  -->
+
+<script>
+
+function mueveReloj(){
+    momentoActual = new Date();
+    hora = momentoActual.getHours();
+    minuto = momentoActual.getMinutes();
+    segundo = momentoActual.getSeconds();
+    horaImprimible = hora + " : " + minuto + " : " + segundo;
+    document.form_reloj.reloj.value = horaImprimible;
+    setTimeout("mueveReloj()",1000);
+}
+
+mueveReloj();
+
+</script>
+
+<script>
+
+var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+var wsUri=ws_scheme + '://' + window.location.host + "/home" + window.location.pathname;
+var socket;
+var estado=-1;
+const usuario="{{ user.username }}";
+
+var init = function() {  
+
+ //////////////////////////////////////
+ // EL SERVIDOR DEL CHAT
+ //////////////////////////////////////
+ socket = new WebSocket(wsUri);
+
+ var messages = document.getElementById("messages");
+
+ /*
+	0	CONNECTING	Socket creado. pero no abierto
+    1	OPEN	    conexión abierta y preparada
+    2	CLOSING	    conexión se está cerrando
+    3	CLOSED	    la conexión está cerrada
+	*/
+
+	estado=socket.readyState;
+	var cadestado="Estado: "+estado+ " CONNECTING";
+	if (estado == 0) { 
+	   cadena="Estado:  <b>"+estado+ " </b> CONECTADO pero no ABIERTO <br>";
+	}
+	if (estado == 1) { 
+	    cadena="Estado: "+estado+ " ABIERTO \n";
+	}
+	if (estado == 2) { 
+	   cadena="Estado: "+estado+ " CERRANDO \n";
+	}
+	if (estado == 3) { 
+	   cadena="Estado: "+estado+ " CERRADO \n";
+	   }
+
+    if (socket.readyState == WebSocket.OPEN) {
+        socket.onopen();
+    }
+    if (socket.readyState == WebSocket.CLOSED) {
+	  
+	}
+
+ socket.onopen = onOpen();
+ socket.onmessage = onMessage;
+ socket.onclose = onClose;
+ socket.onerror = onError;
+  
+};//init
+
+ function onOpen()
+  {
+	var cestado=socket.readyState;
+	cadena="Estado:  <b>"+cestado+ " </b> ABIERTO <br>";
+	cadena="<b>Sala Pública Abierta</b><br>";
+	document.getElementById("messages").innerHTML +=cadena;
+  }
+  
+  function onClose(evt) {
+	var cestado=socket.readyState;
+	cadena="Estado:  <b>"+cestado+ " </b> CLOSE <br>";
+	document.getElementById("messages").innerHTML +=cadena;
+	cadena='Onclose called' + evt+' code is '+evt.code+'  reason is ' + evt.reason+'  wasClean  is' + evt.wasClean;
+	document.getElementById("messages").innerHTML +=cadena;
+    }
+	
+  function onError(evt) {
+	var cestado=socket.readyState;
+	cadena="Estado:  <b>"+cestado+ " </b> ERROR "+evt.data+"<br>";
+	document.getElementById("messages").innerHTML +=cadena;
+    }
+	
+  function onMessage(e)
+  {
+    const datos = JSON.parse(e.data); //recibimos el mensaje en formato JSON
+    document.querySelector('#messages').value += (datos.mensaje + '\n');
+	   if (datos.chat=='si'){
+	     if (usuario!= datos.nombre)
+	      {
+	        messages.innerHTML += `<span class="text-success">${datos.nombre} </\span> ${datos.mensaje} <br/\>`; 
+	      }
+	   }
+	   if (datos.chat=='no'){
+	   alert("NO chat "+`${datos.usuarios.username}`);
+	   ranking.innerHTML += `${datos.usuarios}`; 
+	   //ranking.innerText += `${datos.usuarios}`; 
+	   //ranking.textContent += `${datos.usuarios}`; 
+	   //ranking.value += `${datos.usuarios}`; 
+	   /*
+	   ranking.innerHTML += `<table border="1" class="table table-hover" bordercolor="orange" cellspacing="1" cellpadding="1" id="ranking">`; 
+       ranking.innerHTML += `<tbody>`; 
+	   ranking.innerHTML += `{% for fila in usuarios %}`; 
+	   ranking.innerHTML += `<tr>`; 
+	   ranking.innerHTML += `<td class="#9c9c9c">{{ forloop.counter }}</td>`; 
+	   ranking.innerHTML += `<td class="#9c9c9c">{{ fila.user }}</td>`;
+	   ranking.innerHTML += `<td class="#9c9c9c"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='20' width='20' ></td>`;
+	   ranking.innerHTML += `<td class="#9c9c9c"><img src="{% static 'ajedrez_app/bootstrap/imagenes/españa.jpg'%}" height='20' width='20' ></td>`;
+	   ranking.innerHTML += `<td class="#9c9c9c"><b><font size="4" color="#696969"> {{ fila.elo }} </font></b></td>`;
+	   ranking.innerHTML += `<td class="#9c9c9c">{{ fila.ganadas }}</td>`;
+	   ranking.innerHTML += `<td class="#9c9c9c">{{ fila.perdidas }}</td>`;
+	   ranking.innerHTML += `<td class="#9c9c9c">{{ fila.empatadas }}</td>`;
+	   ranking.innerHTML += `{% if fila.conectado == True %}`;
+	   ranking.innerHTML += `<td class="#9c9c9c">SI</td>`;
+	   ranking.innerHTML += `{% endif %}`;
+	   ranking.innerHTML += `{% if fila.conectado == False %}`;
+	   ranking.innerHTML += `<td class="#9c9c9c">NO</td>`;
+	   ranking.innerHTML += `{% endif %}`;
+	   ranking.innerHTML += `</tr>`;
+	   ranking.innerHTML += `{% endfor %}`;
+	   ranking.innerHTML += `</tbody>`; 
+	   */
+	   }
+	    
+  }
+  
+  function enviarmensaje(){
+        const text = document.getElementById("message_text").value;
+        //se crea el objeto JSON   
+        datos={
+	        'nombre': usuario,
+		    'mensaje': text,
+			'chat': 'si',
+	    }
+        socket.send(JSON.stringify(datos));
+        //OJO las comillas del innerHTML obligatorias que sean las utilizadas
+        messages.innerHTML += `<span class="text-primary">Tu:</\span> ( {{ user.username }} )  ${text} <br/\>`; 
+  }
+  
+  function refrescar(){
+        //se crea el objeto JSON   
+        datos={
+	        'nombre': ' ',
+		    'mensaje': ' ',
+			'chat': 'no',
+	    }
+        socket.send(JSON.stringify(datos));
+  }
+  
+  
+  /*
+  document.querySelector(".btn").onclick = evt => {
+        const text = document.getElementById("message_text").value;
+        //se crea el objeto JSON   
+        datos={
+	        'nombre': usuario,
+		    'mensaje': text,
+			'chat': 'si',
+	    }
+        socket.send(JSON.stringify(datos));
+        //OJO las comillas del innerHTML obligatorias que sean las utilizadas
+        messages.innerHTML += `<span class="text-primary">Tu:</\span> ( {{ user.username }} )  ${text} <br/\>`; 
+  }
+*/
+
+$(document).ready(init); 
+
+</script>
+
+{% endblock content %}

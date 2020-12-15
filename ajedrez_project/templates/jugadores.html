@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+<h1>{{ tittle}}</h1><hr/>
+{% render table %}
+</div>
+{% endblock content%}

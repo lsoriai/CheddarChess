@@ -1,0 +1,86 @@
+{% load staticfiles %}
+<nav class="navbar navbar-inverse navbar-fixed-top navbar-light" style="background-color: orange !important;">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"><font size="5">Cheddarchess</font></a>
+			<!--<a class="navbar-brand" href="/"><img src="{% static 'ajedrez_app/bootstrap/imagenes/queso2.png'%}" height='34' width='34'
+			          id="icono" name="icono" style="padding-bottom: 5px;"></a>-->
+			 <!--<a href="/" style="color: WHITE !important;font-size: 28px !important;position:absolute;top:16px;left:400px">CHEDDARCHESS &nbsp;</a>-->
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+			    <!-- bloque 1 usuarios anonimos no autorizados -->
+			    {% if not request.user.is_authenticated %}
+                    <!--<a href="/">Inicio</a>-->
+				    <!--<!<li><a class="navbar-brand" href="/"><font size="5">Cheddarchess</font></a></li>-->
+                    <li><a href="{% url 'about' %}"><font size="5">Acerca de</font></a></li>
+                    <li><a href="{% url 'contact' %}"><font size="5">Contacto</font></a></li>
+				    <!--<li><a href="http://localhost:8000/forum/"><font size="5">Foro</font></a></li>-->
+				{% endif %}
+				
+				<!-- bloque 2 usuarios autorizados -->
+				{% if request.user.is_authenticated %}
+				     <!--<li class="dropdown">
+					      <a role="presentation" class="dropdown-toggle" data-toggle="dropdown" href="#">
+				             <font size="5">Juega</font>
+						  <span class="caret"></span></a>
+   		                 <ul class="dropdown-menu">
+				             <li><a href="{% url 'contrincante' %}"><font size="5">Contra Jugador   </font></a></li>
+      		                 <li><a href="{% url 'jugar1' %}">      <font size="5">Contra la Máquina</font></a></li>
+    	                 </ul>
+  		             </li>-->
+					 
+					 <!--
+					 <li class="dropdown">
+					      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="presentation"  aria-expanded="false">
+				             <font size="5">Juega</font><span class="caret"></span></a>
+   		                 <ul class="dropdown-menu" role="menu">
+				             <li><a href="{% url 'contrincante' %}"><font size="5">Contra Jugador   </font></a></li>
+      		                 <li><a href="{% url 'jugar1' %}">      <font size="5">Contra la Máquina</font></a></li>
+    	                 </ul>
+  		             </li>
+					  -->
+					
+					<li><a href="{% url 'contrincante' %}"><font size="5">Ir a Partida</font></a></li>
+      		        <li><a href="{% url 'jugar1' %}"><font size="5">Contra Máquina</font></a></li>
+					<li><a class="navbar-brand" href="{% url 'practicar' %}"> <font size="5">Aprende</font></a></li>
+					<li><a class="navbar-brand" href="{% url 'canalRSS' %}"><font size="5">Noticias</font></a></li>
+					<!--<li><a class="navbar-brand" href="http://localhost:8000/rss/main"><font size="5">Noticias</font></a></li>-->
+					<li><a class="navbar-brand" href="{% url 'ranking' %}"><font size="5">Ranking TOP-10</font></a></li>
+					<li><a class="navbar-brand" href="{% url 'enjuego' %}"><font size="5">En Juego</font></a></li>
+					<!--<li><a class="navbar-brand" href="{% url 'desconectar' %}"><font size="5">OFF</font></a></li> 
+					<li><a class="navbar-brand" href="{% url 'conectar' %}"><font size="5">ON</font></a></li>-->
+				{% endif %}
+            </ul>
+			
+			<!-- inicio nuevo bloque para login y register-->
+			<ul class="nav navbar-nav navbar-right">
+			{% if request.user.is_authenticated %}
+				 <li><a href="{% url 'cerrar' %}"><font size="5">Cerrar Sesión</font></a></li>
+			{% endif %}
+			
+			{% if not request.user.is_authenticated %}
+			<a class="navbar-brand" href="{% url 'signup' %}"><font size="5">Regístrate</font></a>
+			{% endif %}
+			</ul>
+			
+			<!-- usuario anónimo -->
+			{% if not request.user.is_authenticated and not "/accounts/login" in request.get_full_path %}
+			<form class='navbar-form navbar-right' method='POST' action='{% url "login" %}'>{% csrf_token %}
+			<div class='form-group'>
+			   <input type='text' class='form-control' name='username' placeholder='nombre del usuario'/>
+			</div>
+			<div class='form-group'>
+			   <input type='password' class='form-control' name='password' placeholder='Clave'/>
+			</div>
+			<button type='submit' class='btn btn-primary btn-lg'>Entrar</button>
+			</form>
+			{% endif %}
+        </div>
+    </div>
+</nav>
+<br>
+
+
+
+

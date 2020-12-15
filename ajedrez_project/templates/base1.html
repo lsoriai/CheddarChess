@@ -1,0 +1,49 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %} Ajedrez | Inicio{% endblock %}</title>
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+		<link href="{% static "ajedrez_app/bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link rel="stylesheet" href="css/chessboard.css" />
+        
+		<script type="text/javascript" src="{% static "ajedrez_app/bootstrap/Scripts/jquery-2.2.3.min.js" %}" rel="stylesheet"></script>
+	    <script type="text/javascript" src="{% static "ajedrez_app/bootstrap/Scripts/bootstrap.js"%}" rel="stylesheet"></script>
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        {% block head %}
+        {% endblock %}
+    </head>
+
+    <body>
+        {% include "navbar.html" %}
+
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+		
+		
+        {% include "footer.html" %}
+
+        <!-- All that javascript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src='{% static "bootstrap/js/bootstrap.min.js" %}'></script>
+		<script src="js/json3.min.js"></script>
+        <script src="js/jquery-1.10.1.min.js"></script>
+        <script src="js/chessboard.js"></script>
+        
+        {% block scripts %}
+        {% endblock %}
+    </body>
+</html>

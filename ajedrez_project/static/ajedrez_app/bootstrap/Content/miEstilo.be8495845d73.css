@@ -1,0 +1,795 @@
+﻿
+body{
+    width:100%;
+    height:100%;
+}
+
+
+h3
+{
+  font-family: 'Franklin Gothic', cursive;
+  font-size:3.5em;
+}
+.package
+{
+ background:url("../Imagenes/package-bg.b02d5e888b1a.jpg") no-repeat 0px 0px;
+ background-size:cover;
+ -webkit-background-size: cover;
+ -moz-background-size: cover;
+ -o-background-size: cover;
+ min-height:520px;
+ padding:4% 0 0 0;
+ border-bottom:1px solid #939597;
+ width:100%;
+ padding-left:0px;
+ padding-top:0px;
+ padding-right:0px;
+ padding:0;
+ height:100%;
+}
+
+.jumbotron{
+   width:100%;
+   padding-left:0px;
+   padding-top:0px;
+   padding-right:0px;
+   padding-bottom:0px;
+   padding:0;
+
+}
+
+.imagentransparente
+{
+  opacity:0.9;
+  filter:alpha(opacity=30); /* For IE8 and earlier */
+}
+
+.contacta
+{
+  height:560px;
+}
+
+/*
+.package h3{
+font-family: 'Pinyon Script', cursive;
+font-size:3.5em;
+}
+.package p{
+font-size:14px;
+width:90%;
+margin:0 auto;
+color:#606367;
+line-height:1.8em;
+}
+*/
+
+.carousel-inner 
+{ 
+    text-align: center; 
+}
+.carousel .item > img 
+{ 
+    display: inline-block; 
+}
+
+.carousel-control 
+{
+  background-color: none;
+  
+}
+    
+.carousel-control.left 
+{
+    background-image: none;
+    background: none !important;
+    filter: progid: none !important;
+    outline: 0;
+    color:blue;
+}
+
+.carousel-control.right
+{
+    background-image: none;
+    background: none !important;
+    filter: progid:none !important;
+    outline: 0;
+    color:blue;
+}
+
+
+
+carousel>.carousel-inner>.item>.circleElement 
+{
+   visibility: hidden;     
+}
+
+ /*
+.carousel-indicators {
+    top: 300px;
+    background: #404549;
+    padding: 30px;
+    border-radius: 10px;
+}
+.carousel-indicators li { cursor: pointer }
+.carousel-control {
+    width: 60px;
+    height: 0;
+    margin-top: -20px;
+    font-size: 100px;
+    background: none;
+    border: none;
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 300;
+}
+.carousel-indicators li {
+   background-color: #999;
+    background-color: rgba(255,255,255,0.3); 
+  
+}
+
+*/
+
+
+
+
+/*  bloque nuevo
+.article-slide .carousel-indicators {
+    bottom: 0;
+    left: 0;
+    margin-left: 5px;
+    width: 100%;
+}
+
+.article-slide .carousel-indicators li {
+    border: medium none;
+    border-radius: 0;
+    float: left;
+    height: 54px;
+    margin-bottom: 5px;
+    margin-left: 0;
+    margin-right: 5px !important;
+    margin-top: 0;
+    width: 100px;
+}
+
+.article-slide .carousel-indicators img {
+    border: 2px solid #FFFFFF;
+    float: left;
+    height: 54px;
+    left: 0;
+    width: 100px;
+}
+
+.article-slide .carousel-indicators .active img {
+    border: 2px solid #428BCA;
+    opacity: 0.7;
+}
+*/
+
+
+
+
+/*
+.carousel-caption {
+    padding: 35px;
+    text-align: center;
+}
+.carousel-caption h4 {
+    font-family: "lato";
+    font-weight: 100;
+    font-size: 61px;
+}
+.carousel-caption p {
+    font-family: "lato";
+    margin-top: 39px;
+    font-size: 22px;
+    margin-bottom: -8px;
+    font-weight: 300;
+    line-height: 30px;
+}
+.carousel-fade .carousel-inner .item {
+    opacity: 0;
+    -webkit-transition-property: opacity;
+    -moz-transition-property: opacity;
+    -o-transition-property: opacity;
+    transition-property: opacity;
+}
+.carousel-fade .carousel-inner .active { opacity: 1 }
+.carousel-fade .carousel-inner .active.left,
+.carousel-fade .carousel-inner .active.right {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}
+.carousel-fade .carousel-inner .next.left,
+.carousel-fade .carousel-inner .prev.right { opacity: 1 }
+.carousel-fade .carousel-control { z-index: 2 }
+@media only screen and (max-width:767px) { 
+    h1 { font-size: 30px !important }
+    .carousel-caption {
+        padding: 15px;
+        text-align: center;
+    }
+    .carousel-caption h4 { font-size: 30px }
+    .carousel-caption p {
+        margin-top: 10px;
+        font-size: 10px;
+        margin-bottom: -10px;
+    }
+    body { padding: 0 !important }
+    .carousel { margin-bottom: 0 }
+    .hero-unit { padding-bottom: 60px }
+    .hero-unit p { font-size: 16px }
+}
+.carousel-container {
+    width: 80% !important;
+    padding-left: 10%;
+    margin-top: 35px;
+}
+*/
+
+
+/********************************************************/
+
+.capabuscar{
+   /*background-color: #E0F2F7; */ /*azul */
+   background-color: white;
+   width: 700px;
+   border: 1px;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid; 
+   border-style: solid; 
+   height:460px;
+   border-radius: 10px;
+   -moz-border-radius:5px;
+   -webkit-border-radius:5px; 
+   padding:1px;
+   text-align: left;
+}
+
+.tablabuscar 
+{
+    width: 700px;
+    /*border: hidden;*/
+    padding-left: 0em;
+   /*border: 1px; 
+    border-style: solid double; */
+   padding:1px;
+   text-align: left;
+}
+
+.tablabuscar td
+{
+    border: hidden; 
+    padding-left: 1px;
+    /*border: 1px; */
+    background-color: white;
+    text-align: left;
+    padding:1px;
+}
+
+.tabla1 
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    border-style: solid double; 
+}
+
+.tabla1 td
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    /*background-color: antiquewhite; */
+    background-color: white;
+}
+
+
+.tabla2
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+}
+
+.tabla2 td
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    /*background-color: antiquewhite;*/
+    background-color: white; 
+}
+
+
+.tabla3
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color: antiquewhite; */
+    background-color: white;
+}
+
+.tabla3 td
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    /*background-color: antiquewhite; */
+    background-color: white;
+}
+
+
+.table3 tr {
+    height: 4px;
+}
+
+
+.tabla4
+{
+    width: 700px;
+    /*border: hidden; */
+    padding-left: 1em;
+    border: 1px;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color: antiquewhite; */
+    background-color: white;
+    border-style: solid double; 
+    height:50px;
+ }
+
+.tabla4 td
+{
+    width: 700px;
+    /* border: hidden; */
+    padding-left: 1em;
+    border:4px;
+    /*background-color: antiquewhite; */
+    background-color: white;
+
+}
+
+
+/***************************************************/
+
+.capaPrincipal{
+   /*background-color: antiquewhite;*/
+   background-color: white;
+   width: 700px;
+   border: 1px;
+   /*border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid; */
+   border-style: solid; 
+   height:336px;
+}
+
+.capaTabla
+{
+    border: 1px;
+    width: 696px;
+    border-style: solid double; 
+}
+
+.lacapa
+{
+    width: 100px;
+    border: hidden;
+    padding-left: 10px;
+    border: 1px;
+    /*background-color: antiquewhite; */
+    background-color: white;
+}
+
+ul{
+   list-style:none;
+  }
+
+#menu2 ul{
+       list-style:none;
+       }
+
+li{
+   list-style:none;
+  }
+
+.capaContenedora{
+    text-align: center;
+    display:inline-block;
+}
+
+.capaIzquierda{
+    float: left;
+    display:inline-block;
+}
+
+.capaDerecha{
+    float: right;
+    display:inline-block;
+    width:100px; 
+}
+.capaCentro {
+    width:40px; 
+}
+
+
+/* tablas de los hoteles */
+
+.hoteles
+{
+    width: 800px;
+    border: 1px; 
+    padding-left: 1em;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color: #E0F2F7;*/
+    background-color: white;
+    border-style: solid double; 
+    border-radius: 5px;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px; 
+}
+
+.hoteles tr
+{
+    /* border: 2px; */
+    padding-left: 1em;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color:  #E0F2F7;*/
+    background-color: white;
+    border-style: solid double; 
+}
+
+.columa250 
+{
+    width:100px; 
+    padding-left: 1em;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color: #E0F2F7; */
+    background-color: white;
+    border:1px;
+}
+
+.columa450
+{
+    width:500px; 
+    padding-left:0;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color:  #E0F2F7;*/
+    background-color: white;
+    text-align:left;
+    border:1px;
+
+}
+
+.columa100
+{
+    width:200px; 
+    padding-left: 1em;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color:  #E0F2F7; */
+       background-color: white;
+    border:1px;
+}
+
+.tablaimagen
+{
+    width:100px;
+    border: 1px; 
+    padding-left: 1em;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color:  #E0F2F7;*/
+       background-color: white;
+}
+
+.tablaimagen td
+{
+    width:100px;
+    border: 1px; 
+    padding-left: 1em;
+    /*background-color:  #E0F2F7;*/
+       background-color: white;
+}
+
+.hoteles1
+{
+    width:500px;
+    border: hidden; 
+    padding-left: 1em;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color:  #E0F2F7;*/
+       background-color: white;
+}
+
+.hoteles1 tr
+{
+    border: hidden; 
+    padding-left: 1em;
+    /*background-color:  #E0F2F7;*/
+       background-color: white;
+    padding-top:1em;
+}
+
+.hoteles1 td {
+        border: 1px;
+        padding-left: 1em;
+        background-color: white;
+        /*background-color:  #E0F2F7;*/
+        padding-top: 1em;
+    }
+
+.hoteles2
+{
+    width:120px;
+    border: hidden; 
+    padding-left: 1em;
+    padding-bottom:0;
+    padding-top:0;
+    /*background-color:  #E0F2F7;*/
+    background-color: white;
+}
+
+.hoteles2 td 
+{
+        width:120px;
+        border: hidden;
+        /*background-color:  #E0F2F7;*/
+        background-color: white;
+        padding-top: 1em;
+        padding-left:0px;
+        padding-right:0px;
+    }
+
+.capa1
+{
+  border-style:solid;
+  border:1px;
+  width:900px;
+}
+
+
+.letra1{
+    color: black;
+    font-size:large;
+    font-weight:bold;
+}
+
+
+.capaoculta
+{
+  /* display:none; OJO cambiar mas adelante*/
+  display: block;
+  border: 2px;
+  width:900px;
+  height:80px;
+}
+
+
+.tablaEligeHabitacion 
+{
+    width: 700px;
+    /*border: hidden;*/
+    padding-left: 0em;
+   /*border: 1px; 
+    border-style: solid double; */
+   padding:0px;
+   display:none;
+}
+
+.capaReserva{
+   background-color: white;
+   width: 700px;
+   height:150px;
+   border: 1px;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid; 
+   border-style: solid; 
+   
+   border-style: solid double; 
+   border-radius: 5px;
+   -moz-border-radius:5px;
+   -webkit-border-radius:5px; 
+
+}
+
+
+.capaReserva1{
+   background-color: white;
+   width: 700px;
+   /*height:150px;*/
+   border: 1px;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid; 
+   border-style: solid; 
+   
+   border-style: solid double; 
+   border-radius: 5px;
+   -moz-border-radius:5px;
+   -webkit-border-radius:5px; 
+
+}
+
+.tablaReserva1 tr {
+   /*background-color: #084B8A;*/ /* Morado*/
+      background-color: white;
+
+   color: white;
+   /*width: 700px;
+   height:90px; */
+   border: 1px;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid; 
+   border-style: solid; 
+   
+   border-style: solid double; 
+   border-radius: 5px;
+   -moz-border-radius:5px;
+   -webkit-border-radius:5px; 
+   padding-left: 0em;
+   text-align: center;
+   padding:2px;
+
+}
+
+.tablaReserva1 td {
+   background-color: white; 
+   /*width: 700px;
+   height:90px; */
+   border-color: #5882FA;
+   border: 1px;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid; 
+   border-style: solid; 
+   
+   border-style: solid double; 
+   border-radius: 5px;
+   -moz-border-radius:5px;
+   -webkit-border-radius:5px; 
+   padding-left: 0em;
+   text-align: center;
+   padding:2px;
+}
+
+.capaDescripcionHotel
+{
+   background-color: white;
+   width: 700px;
+   border: 0px;
+   text-align: justify;
+   padding-left: 0px;
+
+}
+
+.capa700
+{
+   background-color: white;
+   width: 700px;
+   border: 0px;
+   text-align: justify;
+   padding-left: 0px;
+  
+}
+
+.tablaResultadoNoches 
+{
+    width: 700px;
+    /*border: hidden;*/
+    padding-left: 0em;
+   /*border: 1px; 
+    border-style: solid double; */
+   padding:0px;
+}
+
+.tablaResultadoNoches td
+{
+    border: hidden; 
+    padding-left: 0em;
+    width: 700px;
+    /*border: 1px; */
+    /*background-color: antiquewhite; */
+    /*background-color: #E0F2F7;*/
+       background-color: white;
+    text-align: left;
+    padding:0px;
+}
+
+.tablaedades
+{
+    width: 700px;
+    /*border: hidden;*/
+    padding-left: 0em;
+   /*border: 1px; 
+    border-style: solid double; */
+   padding:0px;
+   padding-left: 4em;
+}
+
+.tablaedades td
+{
+    border: hidden; 
+    padding-left: 0em;
+    /*border: 1px; */
+    /*background-color: antiquewhite; */
+    /*background-color: #E0F2F7;*/
+       background-color: white;
+    text-align: left;
+    padding:0px;
+}
+
+input[type=number]::-webkit-inner-spin-button
+{  
+    opacity:1;
+}
+
+.anchoControl {
+    line-height: 25px;
+}
+
+.tablaBotonbuscar 
+{
+    width: 700px;
+    /*border: hidden;*/
+    padding-left: 0em;
+   /*border: 1px; 
+    border-style: solid double; */
+   padding:1px;
+   text-align: left;
+}
+
+.tablaBotonbuscar td
+{
+    border: hidden; 
+    padding-left: 10px;
+    /*border: 1px; */
+    background-color: white;
+    text-align: left;
+    padding:1px;
+}
+
+.privacidad
+{
+ background:url("../Imagenes/package-bg.b02d5e888b1a.jpg") no-repeat 0px 0px;
+ background-size:cover;
+ -webkit-background-size: cover;
+ -moz-background-size: cover;
+ -o-background-size: cover;
+ min-height:520px;
+ padding:4% 0 0 0;
+ border-bottom:1px solid #939597;
+ width:100%;
+ padding-left:60px;
+ padding-top:2px;
+ padding-right:60px;
+ /*padding:0; */
+ height:100%;
+ text-align:justify;
+}
+

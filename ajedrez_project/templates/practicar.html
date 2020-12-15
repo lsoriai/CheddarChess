@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<br><br>
+<div class="jumbotron text-center">
+  <div class="container">
+    <a href="/" class="lang-logo">
+      <img src="{% static 'ajedrez_app/bootstrap/imagenes/tablero.jpg'%}" height='460' width='440' >
+    </a>
+    <h1>Ajedrez en Python</h1>
+    <p>Aplicación Python/Django.</p>
+   <!-- <a type="button" class="btn btn-lg btn-default" href="https://devcenter.heroku.com/articles/getting-started-with-python"><span class="glyphicon glyphicon-flash"></span> Acceso</a>
+    <a type="button" class="btn btn-lg btn-primary" href="https://github.com/heroku/python-getting-started"><span class="glyphicon glyphicon-download"></span> Registro</a>-->
+  </div>
+</div>
+
+<br><br>
+{% endblock content %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %} Registro de Usuarios {% endblock %}
+{% block content %}
+<br><br><br>
+<center>
+  <h1> Registro de Usuarios </h1>
+  <hr style="background-color: blue; height: 1px; border: 0;">
+</center>
+<br>
+<font size="5">
+  <form method="post">
+    {% csrf_token %}
+	  <center>
+	  <table>
+      {% for field in form %}
+	    <tr>
+        <td>{{ field.label_tag }}</td>
+        <td>{{ field }}</td>
+		</tr> 
+        {% if field.help_text %}
+          <small style="display: none">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+      {% endfor %}
+	  </table>
+	  </center>
+	  <br>
+	  <center><button type="submit" class="btn btn-warning btn-lg">Registrar</button></center>
+  </form>
+  </font>
+<br><br><br>
+<hr style="background-color: blue; height: 2px; border: 0;">
+{% endblock %}

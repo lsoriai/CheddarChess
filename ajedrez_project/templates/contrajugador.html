@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>Contrincante</title>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- fondo de la pantalla -->
+<!--<img alt="full screen background image" src="{% static 'app/bootstrap/imagenes/seda.jpg'%}" id="full-screen-background-image" /> -->
+<title>Ajedrez</title>
+<h3>{{ title }}</h3>
+{% load i18n widget_tweaks %}
+<br>
+<h1><p>Configuración de la Partida</p></h1>
+{{ my_html|safe }}
+
+<br><br>
+<img src="{% static '/img/chesspieces/wikipedia/bB.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bK.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bN.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bP.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bQ.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bR.png' %}"/>
+
+<img src="{% static '/img/chesspieces/wikipedia/wB.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wK.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wN.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wP.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wQ.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wR.png' %}"/>
+<br>
+<hr style="background-color: orange; height: 2px; border: 0;">
+<form method="POST" name="formulario" class="post-form" action="/iniciarjuego/">
+{% csrf_token %}
+
+<table style="width:30%" cellspacing="6" cellpadding="6" border="0">
+<tr style="height:40px">
+<td> <font color="blue" size="4"><b>ELO:</b></font> </td>
+<td style="width:20px"><h4>Mín. &nbsp;&nbsp;&nbsp;</h4></td>
+<td><input type="number" name="elo" id="elo" min="700" max="3000"> </td>
+<td></td>
+<td style="width:20px"><h4>Max. &nbsp;&nbsp;&nbsp;</h4></td>
+<td><input type="number" name="elo1" id="elo1" min="700" max="3000"> </td>
+</tr>
+
+<tr style="height:40px">
+<td><font color="blue" size="4"><b>contrincante</b></font> </td>
+<td style="width:20px"></td>
+<td> <select class="form-control" id="contrincantes" name="contrincantes" style="font-size:14pt; width:120px">
+{% for usuario in usuarios %}
+{% if usuario.conectado %}
+  <option value="{{ usuario.user }}">{{ usuario.user }}</option>
+{% endif %}
+{% endfor %}
+</select>
+</td>
+<td></td>
+<td></td>
+<td></td>
+<!--<td><button type="submit" name="aleatorio" id="aleatorio" class="btn btn-success" style="font-size:12pt">Contrincante aleatorio</button></td> -->
+</tr>
+
+<tr style="height:40px">
+<td> <font color="blue" size="4"><b>Fichas:</b></font></td>
+<td style="width:20px"></td>
+<td><input type="radio" name="fichas" id="fichas" value="Blancas"> Blancas</td>
+<td><input type="radio" name="fichas" id="fichas" value="Negras"> Negras</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr style="height:40px">
+<td> <font color="blue" size="4"><b>Tipo de Partida:</b></font> </td>
+<td style="width:20px"></td>
+<td><input type="radio" name="partida" id="partida" value="Publica"> Pública</td>
+<td><input type="radio" name="partida" id="partida" value="Privada"> Privada</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr style="height:40px">
+<td> <font color="blue" size="4"><b>Tiene Tiempo:</b></font> </td>
+<td style="width:20px"></td>
+<td><input type="radio" name="tiempo" id="tiempo" value="si"> SI</td>
+<td><input type="radio" name="tiempo1" id="tiempo1" value="no"> NO</td>
+<td></td>
+<td><input type="number" name="minutos" id="minutos" min="1" max="60" value="1" placeholder="minutos" style="display:none;"></td>
+</tr>
+
+<tr style="height:40px">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr style="height:40px">
+<td><button type="submit" id="iniciarpartida" class="btn btn-lg btn-primary" style="font-size:12pt">Crear Partida</button></td> 
+<td></td>
+<!--<td align="center"><button type="submit" name="aleatorio" id="aleatorio" class="btn btn-lg btn-success" style="font-size:12pt">Aleatoria</button></td> -->
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</form>
+
+<hr style="background-color: orange; height: 2px; border: 0;">
+<p>
+* Nota: Hay 2 tipos de partidas:  <br>
+1) Iniciar Partida para jugar contra un contrincante elegido <br>
+2) Aleatoria para jugar con un contrincante elegido aleatoriamente por el ordenador <br>
+</p>
+<!--<td> <font color="green" size="5"><b>Jugadores Activos:</b></font> </td>
+<table border="1">
+{% for fila in usuarios %}
+{% if fila.conectado %}
+<tr style="height:34px; border: 0px">
+<td style="width:180px; text-align: center">
+   <b><font color="blue" size="4">{{ fila.user }}</font></b><br>
+</td>   
+</tr>
+{% else %}
+  <b></b>
+{% endif %}
+{% endfor %}
+</table>
+-->
+<!--<form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Avisar</button>
+    </form> -->
+
+<script>
+
+$(document).ready(function(){
+	
+	$("#tiempo").click(function(event){ //$("input[type=radio]").click(function(event){
+          
+            var valor = $(event.target).val();
+			//alert("ojo"+valor);
+          
+            if(valor == 'si'){
+                 $("#minutos").show();
+            }
+			else {
+                $("#minutos").hide();
+            }
+    });
+	
+	$("#tiempo1").click(function(event){ 
+          
+            var valor = $(event.target).val();
+			//alert("ojo"+valor);
+          
+            if(valor == 'no'){
+                $("#minutos").hide();
+            }
+    });
+	
+});
+</script>
+
+{% endblock content %}

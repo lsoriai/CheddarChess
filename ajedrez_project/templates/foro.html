@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+<h3>{{ title }}</h3>
+<h1><p>Foro</p></h1>
+
+{{ my_html|safe }}
+
+<p>
+, {{ my_number }}
+{{ my_list }}
+</p>
+
+<ul>
+    <li>Leyre.....</li>
+    <li>Curriculum...</li>
+	<li>otros datos...</li>
+</ul>
+
+<ul>
+{% for abc in my_list %}
+    {% if abc == 312 %}
+        <li>{{ forloop.counter }} - {{ abc|add:22 }}</li>
+    {% elif abc == "Abc" %}
+        <li>This is not the network</li>
+    {% else %}
+        <li>{{ forloop.counter }} - {{ abc }}</li>
+    {% endif %}
+    
+    
+{% endfor %}
+</ul>
+
+<br><br>
+{% endblock content %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<br><br>
+{{ my_html|safe }}
+<center>
+<!--<table border="1" align="center" class="table table-striped">-->
+<!--<table border="1" align="center" class="table table-hover">-->
+<br><br>
+<font color="navy" size="6" face="Comic Sans MS,Arial,Verdana">RANKING TOP-10</font>
+<br><br>
+</center>
+
+<table border="1" class="table table-hover" bordercolor="#0000FF" cellspacing="1" cellpadding="1">
+  <thead> 
+  <tr>
+	<th class="bg-info">Posición</th>
+	<th class="success">Nombre del Jugador</th>
+	<th class="success">Foto</th>
+	<th class="success">País</th>
+	<th class="success">ELO</th>
+	<th class="success">Ganadas</th>
+	<th class="danger">Perdidas</th>
+	<th class="info">Empatadas</th>
+	<th class="info">Conectado</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+	{% for fila in usuarios %}
+	<!--<td class="bg-info">{{ fila.id }}</td> ANULADA 29-08-2020-->
+	<td class="bg-info">{{ forloop.counter }}</td>
+	<!--<td class="bg-info">{{ fila.id }}</td>-->
+	<td class="success">{{ fila.user }}</td>
+	<td class="info"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='20' width='20' ></td>
+	<td class="info"><img src="{% static 'ajedrez_app/bootstrap/imagenes/españa.jpg'%}" height='20' width='20' ></td>
+	<td class="success"><b><font size="3" color="#0000ff"> {{ fila.elo }} </font></b></td>
+	<td class="success">{{ fila.ganadas }}</td> 
+	<td class="danger">{{ fila.perdidas }}</td>
+	<td class="info">{{ fila.empatadas }}</td>
+	{% if fila.conectado == True %}  
+	   <td class="info">SI</td>
+	{% endif %}
+	{% if fila.conectado == False %}  
+	   <td class="info">NO</td>
+	{% endif %}
+	
+  </tr>
+	{% endfor %}
+  </tbody>
+ </table>
+<br><br>
+
+<!-- fondo de color gris claro -->
+<div style="height:242px; background-color:#EAECEE;" >
+     <div style="min-height:242px; height:242px; background-color:#EAECEE;">  
+     </div> 
+</div> 
+
+{% endblock content %}

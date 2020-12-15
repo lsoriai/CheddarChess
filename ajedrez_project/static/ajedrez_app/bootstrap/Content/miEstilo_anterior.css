@@ -1,0 +1,347 @@
+﻿/* .table {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size: 12px;
+        margin: 0px;
+        width: 480px; 
+        text-align: left;
+        border-collapse: collapse; 
+    } */
+
+    head {
+        background-color: #C1D4E6;
+        font-weight: bold;
+        color: #FFFFFF;
+    }
+
+   /* th {
+        font-size: 13px;
+        font-weight: normal;
+        padding: 8px;
+        background: #b9c9fe;
+        border-top: 4px solid #aabcfe;
+        border-bottom: 1px solid #FFFFFF;
+        color: #039;
+    } */
+
+   /* td {
+        padding: 0px;
+        background: #e8edff;
+        border-bottom: 1 px solid #fff; 
+        color: #669;
+        border-top: 1px solid transparent;
+    } */
+
+   /* tr:hover td {
+        bacground: #d0dafd;
+        color: #339;
+    } */
+
+    /********************************************************/
+
+    body {
+        padding-top: 50px;
+        padding-bottom: 20px;
+    }
+
+    .body-content {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .field-validation-error {
+        color: brown;
+    }
+
+    .validation-summary-valid {
+        color: brown;
+    }
+
+    .validation-summary-errors {
+        color: brown;
+    }
+
+    input[type="checkbox"].input-validation-error {
+        border: 0 none;
+    }
+
+    input, select, textarea {
+        max-width: 280px;
+    }
+
+/*********************************************************************/
+
+.capaPrincipal{
+   background-color: antiquewhite;
+   width: 700px;
+   border: 1px;
+   /*border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid; */
+   border-style: solid; 
+   height:336px;
+}
+
+.capaTabla{
+    border: 1px;
+    width: 696px;
+    border-style: solid double; 
+}
+
+.tabla1 
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    border-style: solid double; 
+}
+
+.tabla1 td
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    background-color: antiquewhite; 
+}
+
+
+.tabla2
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    
+}
+
+.tabla2 td
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    background-color: antiquewhite; 
+}
+
+
+.tabla3
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    padding-bottom:0;
+    padding-top:0;
+    background-color: antiquewhite; 
+}
+
+.tabla3 td
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 1em;
+    border: 1px;
+    background-color: antiquewhite; 
+}
+
+
+.tabla3 tr {
+    height: 4px;
+}
+
+
+.lacapa
+{
+    width: 696px;
+    border: hidden;
+    padding-left: 10px;
+    border: 1px;
+    background-color: antiquewhite; 
+}
+
+ul{
+   list-style:none;
+  }
+
+#menu2 ul{
+       list-style:none;
+       }
+
+li{
+   list-style:none;
+  }
+
+.tabla4
+{
+    width: 700px;
+    /*border: hidden; */
+    padding-left: 1em;
+    border: 1px;
+    padding-bottom:0;
+    padding-top:0;
+    background-color: antiquewhite; 
+    border-style: solid double; 
+    height:50px;
+ }
+
+.tabla4 td
+{
+    width: 700px;
+    /* border: hidden; */
+    padding-left: 1em;
+    border:4px;
+    background-color: antiquewhite; 
+}
+
+/*.capaContenedora{
+    text-align: center;
+    display:inline-block;
+}
+
+.capaIzquierda{
+    float: left;
+    display:inline-block;
+}
+*/
+/*.capaDerecha{
+    float: right;
+    display:inline-block;
+    width:100px; 
+}
+.capaCentro {
+    width:40px; 
+}
+*/
+
+/* tablas de los hoteles */
+.hoteles
+{
+    /*width: 700px; */
+    border: hidden; 
+    padding-left: 0em;
+    /*border: 1px;*/
+    padding-bottom:0;
+    padding-top:0;
+    background-color: antiquewhite; 
+    border-style: solid double; 
+    /*height:50px; */
+
+}
+
+.hoteles td
+{
+    /*width: 700px; */
+    /* border: hidden; */
+    padding-left: 1em;
+    background-color: antiquewhite; 
+    padding:0px;
+}
+
+
+.imagen
+{
+    /*width: 202px; */
+   /*border: hidden; */
+    padding-left: 0em;
+    /*border: 1px; */
+    padding-bottom:0;
+    padding-top:0;
+    padding-right:0;
+    background-color: antiquewhite; 
+    /*border-style: solid double; */
+    /* height:190px; */
+    padding:0px;
+
+}
+
+.imagen tr
+{
+   /* width: 201px; */
+    padding-left: 0em;
+    padding-bottom:0;
+    padding-top:0;
+    padding-right:0;
+    background-color: antiquewhite; 
+    padding:0px;
+}
+
+.imagen td
+{
+   /* width: 200px; */
+    padding-left: 0em;
+    padding-bottom:0;
+    padding-top:0;
+    padding-right:0;
+    background-color: antiquewhite; 
+    padding:0px;
+}
+
+.hoteles1
+{
+    width: 400px;
+    border: hidden; 
+    padding-left: 1em;
+    /*border: 1px;*/
+    padding-bottom:0;
+    padding-top:0;
+    background-color: antiquewhite; 
+    border-style: solid double; 
+    /*height:50px; */
+
+}
+
+.hoteles1 tr
+{
+    width: 700px;
+    /* border: hidden; */
+    padding-left: 1em;
+    /*border:4px; */
+    background-color: antiquewhite; 
+    padding-top:1em;
+    height: 6px;
+}
+
+ .hoteles1 td {
+        width: 400px;
+        border: hidden;
+        padding-left: 1em;
+        /* border: 4px; */
+        background-color: antiquewhite;
+        padding-top: 1em;
+        height: 6px;
+    }
+
+.hoteles2
+{
+    width: 400px;
+    border: hidden; 
+    padding-left: 1em;
+    /*border: 1px;*/
+    padding-bottom:0;
+    padding-top:0;
+    background-color: antiquewhite; 
+    border-style: solid double; 
+    height:50px;
+}
+width="400" style="border: hidden; ; "
+
+.hoteles2 td {
+        width: 400px;
+        border: hidden;
+        /*padding-left: 1em; */
+        border: 4px;
+        background-color: antiquewhite;
+        padding-top: 1em;
+        text-align:right;
+        padding-right:1em;
+    }
+
+.capa1
+{
+  border-style:solid;
+  border:1px;
+  /*width:900px;*/
+  width:1024px;
+}
