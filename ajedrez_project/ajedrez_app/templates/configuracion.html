@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>Contrincante</title>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- fondo de la pantalla -->
+<title>Ajedrez</title>
+<h3>{{ title }}</h3>
+{% load i18n widget_tweaks %}
+<br>
+<center>
+<font color="#686868" size="5" face="Comic Sans MS,Arial,Verdana">Configuración de la Partida</font>
+<hr>
+<br>
+</center>
+{{ my_html|safe }}
+
+<img src="{% static '/img/chesspieces/wikipedia/bB.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bK.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bN.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bP.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bQ.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/bR.png' %}"/>
+
+<img src="{% static '/img/chesspieces/wikipedia/wB.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wK.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wN.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wP.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wQ.png' %}"/>
+<img src="{% static '/img/chesspieces/wikipedia/wR.png' %}"/>
+<br><br>
+
+{% if request.user.is_authenticated %}
+
+<table border="0"  height="110" width="1140">
+<tr>
+<td>
+&nbsp; <img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='90' width='80'>
+&nbsp;&nbsp; <font color="#686868" size="6">[ {{ creador }} ] </font>
+</td>
+</tr>
+</table>
+<br><br>
+<form method="POST" name="formulario" class="post-form" action="/jugar/">
+{% csrf_token %}
+
+<table width="760" frame="border" rules="none" border="0">
+<tr style="height:40px">
+<td> <font color="#686868" size="6" face="Comic Sans MS,Arial,Verdana">Fichas:</font></td>
+<td><input type="radio" name="fichas" id="fichas" value="Blancas">
+     <font color="#686868" size="5" face="Comic Sans MS,Arial,Verdana">Blancas</font></td>
+<td> <input type="radio" name="fichas" id="fichas" value="Negras"> 
+     <font color="#686868" size="5" face="Comic Sans MS,Arial,Verdana">Negras</font></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr style="height:40px">
+<td> <font color="#686868" size="6" face="Comic Sans MS,Arial,Verdana">Tipo de Partida:</font></td>
+<td><input type="radio" name="partida" id="partida" value="Publica"> 
+     <font color="#686868" size="5" face="Comic Sans MS,Arial,Verdana">Pública</font></td>
+<td> <input type="radio" name="partida" id="partida" value="Privada"> 
+     <font color="#686868" size="5" face="Comic Sans MS,Arial,Verdana">Privada</font></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr style="height:40px">
+<td> <font color="#686868" size="6" face="Comic Sans MS,Arial,Verdana">Tiene Tiempo:</font> </td>
+<td><input type="radio" name="tiempo" id="tiempo" value="si">
+<font color="#686868" size="5" face="Comic Sans MS,Arial,Verdana">SI</font></td>
+<td><input type="radio" name="tiempo" id="tiempo" value="no">
+<font color="#686868" size="5" face="Comic Sans MS,Arial,Verdana">NO</font></td>
+<td></td>
+<td><input type="number" name="minutos" id="minutos" min="1" max="60" 
+         value="1" placeholder="minutos" style="display:none;"></td>
+</tr>
+<tr height="120">
+</tr>
+</table>
+<center>
+<!--<button type="submit" id="iniciarpartida" class="btn btn-lg btn-warning" style="font-size:12pt">Iniciar Partida</button></td>-->
+<td class="#9c9c9c"> <a href="{% url 'jugar' idpartida=partida.id pcontrincante=" " %}" id="iniciarpartida" class="btn btn-lg btn-warning" style="font-size:12pt">Iniciar Partida</a></td>
+</center>
+{% endif %}
+</form>
+<!--<hr style="background-color: orange; height: 2px; border: 0;">-->
+<div style="height:290px;">
+     <div style="min-height:290px; height:290px; background-color:#EAECEE;">  
+       
+     </div> 
+</div> 
+<script>
+
+$(document).ready(function(){
+	
+	$("#tiempo").click(function(event){ //$("input[type=radio]").click(function(event){
+          
+            var valor = $(event.target).val();
+			//alert("ojo"+valor);
+          
+            if(valor == 'si'){
+                 $("#minutos").show();
+            }
+			else {
+                $("#minutos").hide();
+            }
+    });
+	
+	$("#tiempo1").click(function(event){ 
+          
+            var valor = $(event.target).val();
+			//alert("ojo"+valor);
+          
+            if(valor == 'no'){
+                $("#minutos").hide();
+            }
+    });
+	
+});
+</script>
+<style>
+   body {overflow-y:hidden!important;}
+</style>
+
+{% endblock content %}

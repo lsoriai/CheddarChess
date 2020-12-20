@@ -70,8 +70,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	
 		print("\n\n Fase 2. RECEIVE ...............")
 		text_data_json = json.loads(text_data)
-	
 		print("\n\n Fase 2A el JSON...\n"+str(text_data_json)+" \n\n")
+		
+		'''
+		ganador=""
+		ganador = text_data_json['ganador']
+		if ganador == 'ganador':
+			print("GANADOR "+str(ganador))
+			actual=self.user
+			actual=
+			idusuario=
+			jugador=Jugador.objects.get(user=idusuario) #usuario current por defecto si no existe uno concreto
+			idjugador=jugador.id
+			ganadas=jugador.ganadas+1
+			perdidas=jugador.perdidas
+			empatadas=jugador.empatadas
+			elo=jugador.elo
+			federacion=jugador.federacion
+			total=ganadas+perdidas+empatadas
+		
+		print ("\ntotales partidas del jugador:::::"+str(total))
+		print ("==federacion="+str(jugador.federacion))
+		print ("==idjugador="+str(idjugador))
+		print ("==CONECTADO ANTES DE ="+str(jugador.conectado))
+		
+		#cuando un jugador entrar en el sitio web y se loguea actualiza en la tabla el campo conectado a true
+		#equivale a hacer un update de sql
+		jugadoraux=Jugador.objects.get(id=idjugador) 
+		jugadoraux.conectado=True
+		jugadoraux.save()
+		
+		print ("==CONECTADO DESPUES="+str(jugadoraux.conectado))
+		print ("==OK=")
+		request.session['actual']=str(actual) # almacenar en una variable de sesión el jugador actual tipo cookie en ram
+		'''
 
 		mensaje=""
 		nombre=""
@@ -231,6 +263,8 @@ class ChatConsumer1(AsyncWebsocketConsumer):
 		jugador=""
 		fen=""
 		chat=text_data_json['chat']
+		color=""
+		turno=""
 		
 		#El JSON del chat nombre+mensaje
 		if chat=='si':
@@ -242,6 +276,8 @@ class ChatConsumer1(AsyncWebsocketConsumer):
 			#print("valor de chat NO == "+str(chat))	
 			jugador=text_data_json['jugador']
 			fen=text_data_json['fen']
+			color=text_data_json['color']
+			turno=text_data_json['turno']
 				
 		print("\n\n fase 2B. mensaje ...  "+str(mensaje))
 		print(" Fase 2C. nombre .... ", nombre)
@@ -282,9 +318,19 @@ class ChatConsumer1(AsyncWebsocketConsumer):
 				"jugador": jugador,
 				'fen': fen,
 				'chat': 'no',
+				'color': color,
+				'turno': turno
 			})
 		
-			
+			piezas=Pieza()
+			#piezas.nombre_pieza=fen[0:14]
+			piezas.nombre_pieza=fen
+			piezas.num_pieza=1
+			piezas.foto="foto1"
+			piezas.color="black"
+			piezas.save()
+			print("Pieza almacenada")
+		
 		print("Fase 2E. FIN DEL ENVIO: ")
 
 	async def disconnect(self, close_code):
@@ -297,11 +343,12 @@ class ChatConsumer1(AsyncWebsocketConsumer):
 		print("mENSAJE RECIBIDO EN LA sala ptivada: " + event["mensaje"])
 		mensaje=event["mensaje"]
 		nombre=event["nombre"]
+		sala="sala1"  #sala por defecto
 		# envia el mensaje del WebSocket
 		await self.send(text_data=json.dumps({
 			'nombre': nombre,
 			'mensaje': mensaje,
-			'chat':'si',
+			'chat':'si'
 		}))	
 		
 	# El método CLAVE que recibe un mensaje de grupo de una sala para el tablero
@@ -310,10 +357,15 @@ class ChatConsumer1(AsyncWebsocketConsumer):
 		print("mENSAJE RECIBIDO del tablero: " + event["fen"])
 		jugador=event["jugador"]
 		fen=event["fen"]
+		color=event["color"]
+		turno=event["turno"]
+		sala="sala1"  #sala por defecto
 		# Send message to WebSocket
 		await self.send(text_data=json.dumps({
 			'jugador': jugador,
 			'fen': fen,
 			'chat':'no',
+			'color': color,
+			'turno': turno
 		}))		
 		

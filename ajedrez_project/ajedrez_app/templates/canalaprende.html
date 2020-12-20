@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br/><br><br>
+<font color="#696969" size="6" face="Comic Sans MS,Arial,Verdana">CANALES DE APRENDIZAJE DE AJEDREZ</font>
+<br><br>
+
+<table>
+<tr>
+<td>
+<form class="form-inline">
+<div class="form-group mx-sm-3 mb-2">
+<label for="inputPassword2" class="sr-only">Password</label>
+<input type="hidden" class="form-control" name="url" size="80" value="https://comojugarajedrez.webnode.es/rss/novedades.xml">
+</div>
+<button type="submit" class="btn btn-warning mb-2">comojugarajedrez</button>
+</form>
+</td>
+<td>
+<form class="form-inline">
+<div class="form-group mx-sm-3 mb-2">
+<label for="inputPassword2" class="sr-only">Password</label>
+<input type="hidden" class="form-control" name="url" size="80" value="https://comojugarajedrez.webnode.es/rss/blog.xml">
+</div>
+<button type="submit" class="btn btn-warning mb-2">Blog</button>
+</form>
+</td>
+</tr>
+</table>
+<!--http://feeds.bbci.co.uk/news/rss.xml-->
+
+<hr style="background-color: orange; height: 2px; border: 1; width:100%;"> 
+
+{% if feed %}
+   <font color="#696969" size="6" face="Comic Sans MS,Arial,Verdana">{{ feed.feed.title }}</font>
+   <br>
+{% if feed.entries %}
+
+   {% for entry in feed.entries %}
+
+<div class="card">
+  <div class="card-header">
+      <font color="#696969" size="4" face="Comic Sans MS,Arial,Verdana">Noticia/Feed</font>
+  </div>
+
+  <div class="card-body">
+     <h5 class="card-title"><font color="#696969" size="3" face="Comic Sans MS,Arial,Verdana">Titular: {{ entry.title }}</font></h5>
+     <p class="card-text">Descripción: {{ entry.description }}</p>
+     <a href="{{ entry.link }}" class="btn btn-warning">Visitar el enlace</a>
+  </div>
+</div>
+<br>
+<p>{{ entry.published }}</p>
+<hr>
+{% endfor %}
+
+{% endif %}
+
+{% else %}
+    <br>
+{% endif %}
+
+{{ feed2 }}
+
+{% endblock %}

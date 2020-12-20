@@ -1,0 +1,735 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block head %}
+
+<title>CheddarChess</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="{% static 'css/chessboard-0.3.0.css' %}">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="{% static 'ajedrez_app/chessboardjs/js/chessboard-0.3.0.js' %}"></script>  <!-- la ruta buena estática -->
+<script src="{% static 'ajedrez_app/chessboardjs/js/chess.js' %}"></script>
+<script src="{% static 'ajedrez_app/chessboardjs/js/stockfish.js' %}"></script>
+
+<!--anulada la barra vertical del scroll -->
+<style type="text/css">
+	body
+	{
+	overflow-y: hidden;
+	overflow-x: scroll;
+	}
+</style>
+<style type="text/css">
+.highlight-white {
+  -webkit-box-shadow: inset 0 0 3px 3px yellow;
+  -moz-box-shadow: inset 0 0 3px 3px yellow;
+  box-shadow: inset 0 0 3px 3px yellow; 
+  background-color: #CED26B;  
+}
+.highlight-black {
+  -webkit-box-shadow: inset 0 0 3px 3px blue;
+  -moz-box-shadow: inset 0 0 3px 3px blue;
+  box-shadow: inset 0 0 3px 3px blue; 
+  background-color: #AAA23B;  
+}
+
+</style>
+{% endblock %}
+{% block content %}
+
+<br><br><br>
+<table border="0">
+<tr>
+<td><font color="#696969" size="6" face="Comic Sans MS,Arial,Verdana">PARTIDA: &nbsp </font>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td><font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">Si no acepta otro oponente se cancela la partida </font></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+
+{% if request.user.is_authenticated %} 
+    {% if contrincante is not None %} 
+         <td><font color="#686868" size="5">&nbsp;&nbsp;&nbsp;Se unió el jugador: &nbsp; {{ contrincante }} </font></td>
+   {% else %}  
+         <td><font color="#686868" size="5">&nbsp;&nbsp;&nbsp;En Espera de Oponente</font></td>
+   {% endif %}  
+{% endif %}  
+
+</tr>
+</table>
+<br>
+
+{% if estado == "en espera" %}
+<font color="black" size="4"> Estado: </font><font color="#686868" size="4">[ Esperando respuesta de {{ contrincante }} para comenzar ] </font> 
+{% endif %}
+
+{% if estado == "aceptada" %}
+<font color="black" size="4"> Estado: </font><font color="#686868" size="4">[ aceptada por {{ contrincante }} para iniciar la partida ] </font> 
+{% endif %}
+
+{% if estado == "en juego" %}
+<font color="black" size="4"> Estado: </font><font color="#686868" size="4">[ en juego ] </font> 
+{% endif %}
+
+{% if estado == "finalizada" %}
+<font color="black" size="4"> Estado: </font><font color="#686868" size="4">[ finalizada ] </font> 
+{% endif %} 
+
+<table border="0">
+<tr>
+<td>
+ <table border="0">
+ <tr>
+<td><input type="button" id="cancelar" class="btn btn-warning" value="Abortar Partida" onclick="javascript:cancelarPartida();"/></td> 
+<td><input type="button" id="rendirse" class="btn btn-warning" value="Rendirse" onclick="javascript:rendirse();"/></td> 
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<!-- los relojes del juego -->
+
+<td>
+  <font color="#686868" size="5">
+   <form name="form_reloj1">
+     <input type="text" name="reloj1" size="8" readonly style="display:none">
+   </form>
+  </font>
+</td>
+<td>
+   <font color="#686868" size="5">
+    <form name="form_reloj">
+       <input type="text" name="reloj" size="10" readonly>
+    </form>
+   </font>
+   <font color="black" size="3">
+      <div id="RELOJ"></div>
+   </font>
+</td>
+<!-- nuevo reloj jugador 1 -->
+<td><font color="orange" size="4"></font>&nbsp;</td>
+<td>
+   <font color="#686868" size="5">
+    <form name="form_reloj2">
+       <input type="text" name="reloj2" size="10" readonly style="display:none">
+    </form>
+   </font>
+   <font color="black" size="3">
+      <div id="RELOJ2"></div>
+   </font>
+</td>
+<!-- nuevo reloj jugador 2 -->
+
+<td><font color="orange" size="4"></font>&nbsp;</td>
+<td>
+   <font color="#686868" size="5">
+    <form name="form_reloj3">
+       <input type="text" name="reloj3" size="10" readonly style="display:none">
+    </form>
+   </font>
+   <font color="black" size="3">
+      <div id="RELOJ3"></div>
+   </font>
+</td>
+</tr>
+</table>
+<br>
+
+<table border="0" align="center">
+<tr>
+<td>
+  <div id="board2" style="width: 500px;background-color: orange;" readonly></div>
+</td>
+<td>
+<div style="clear:both"></div>
+</td>
+</tr>
+</table>
+</td>
+<td>
+<table border="0">
+<tr>
+<td align="right">
+
+<!-- --------------EL CHAT----------------  -->
+
+<table border="0" style="border-color: #EAECEE;">
+<tr>
+   <td align="center">
+   <br>
+  <div class="form-group"  style="border-color: #EAECEE;">
+	  <input type="text" id="room-name-input" name="room-name-input" size="24" maxlength="24" value="privada" style="display:none">
+   </div>
+	<div class="panel panel-primary" style="background-color: #EAECEE; border-color: #686868;">
+        <div class="panel-heading" style="background-color: orange;">
+		    <span class="glyphicon glyphicon-comment"></span> Sala Privada
+		</div>
+	    <div id="messages" class="form-control" style="width: 300px; height: 380px; overflow: scroll;text-align: left;background-color: #EAECEE;"></div>
+	</div>
+	<input type="text" class="form-control" id="message_text" placeholder="teclea tu mensaje aquí..." size="52" /> 
+    <input id="chat-message-submit" type="button" class="btn btn-warning" value="Enviar"  onclick="chatear();">
+   <br>
+  </td>
+</tr>
+</table>
+<!---- fin chat-->
+ </td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br>
+<table>
+<tr>
+<td>
+<table border="0" width="660" height="130">
+<tr>
+  <td>
+    <font color="black" size="4">Estado:</font>
+	<font color="#686868" size="4"><div id="status">Blancas mueven</div></font>
+ </td>
+ <td>
+   <font color="black" size="4">Posiciones:</font>
+   <font color="#686868" size="3"><div id="fen">{{fen}}</div></font>
+ </td>
+</tr>
+<tr>
+  <td>
+    <font color="black" size="4"></font>
+	<font color="white" size="4"><div id="pgn"></div></font>
+  </td>
+</tr>
+</table>
+</td>
+<td>
+<table border="0" width="480" height="130" style="display:none">
+<tr>
+<td>
+<font color="#686868" size="4"> Blancas:</font><font color="orange" size="4">[ {{ user.username }} ] </font>
+<font color="#686868" size="4"> Negras: </font><font color="orange" size="4">[ {{ contrincante }} ] </font>
+<br>
+<font color="#686868" size="4"> Tipo de Partida: </font><font color="orange" size="4">[ {{ partida }} ] </font> 
+<font color="#686868" size="4"> Con Tiempo: </font><font color="orange" size="4">[ {{ tiempo }} ] </font>
+<br>
+{% if estado == "en espera" %}
+<font color="black" size="4"> Mensaje: </font><font color="#686868" size="4">[ Esperando respuesta de {{ contrincante }} para iniciar ] </font> 
+{% endif %}
+
+{% if estado == "aceptada" %}
+<font color="black" size="4"> Mensaje: </font><font color="orange" size="4">[ aceptada por {{ contrincante }} para iniciar la partida ] </font> 
+{% endif %}
+
+{% if estado == "en juego" %}
+<font color="black" size="4"> Mensaje: </font><font color="orange" size="4">[ en juego ] </font> 
+{% endif %}
+
+{% if estado == "finalizada" %}
+<font color="black" size="4"> Mensaje: </font><font color="orange" size="4">[ finalizada ] </font> 
+{% endif %}
+<br>
+<font color="black" size="4"></font><font color="orange" size="4"><div id="mensajes" name="mensajes"></div></font> 
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+<br>
+Sala: <input type="text" id="room" size="10" value="sala1" readonly>
+
+<!--  INICIO DE LOS SCRIPTS -->
+
+<script>
+
+ //variables del reloj
+ var segundos = 0;
+ var minutos = 1;
+ var llamada;
+ var ceromin='';
+ var ceroseg='';
+  
+ //variables de los cronometros nuevos
+ var segundos2 = 0;
+ var minutos2 = 1;
+ var llamada2;
+ var ceromin2='';
+ var ceroseg2='';
+ 
+ var segundos3 = 0;
+ var minutos3 = 1;
+ var llamada3;
+ var ceromin3='';
+ var ceroseg3='';
+ 
+
+ //variables del juego del ajedrez
+ var board = null;   
+ var game = new Chess(); 
+ var $status = $('#status');
+ var $fen = $('#fen');
+ var $pgn = $('#pgn');
+ 
+ //variables de channels para la sala privada
+ var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+ var wsUri=""+ws_scheme + '://' + window.location.host + "/jugar/"; //var wsUri="ws://localhost:8000/jugar/";
+ var socket;
+ var estado=-1;
+ var usuario="{{ user.username }}";
+ var color = "w";
+ var turno = "w";
+ var jugador1="{{ jugador1 }}";
+ var jugador2="{{ contrincante }}";
+ //alert("jugador1 "+jugador1);
+ //alert("jugador2"+jugador2);
+ 
+ if (jugador2 == usuario){
+	//Se trata del contrincante
+	jugador2=usuario; //No se sabe el nombre del creador
+ } 
+ //funciones de los relojes
+function mueveReloj(){
+    momentoActual = new Date()
+    hora = momentoActual.getHours()
+    minuto = momentoActual.getMinutes()
+    segundo = momentoActual.getSeconds()
+    horaImprimible = hora + " : " + minuto + " : " + segundo
+    document.form_reloj.reloj.value = horaImprimible
+    setTimeout("mueveReloj()",1000)
+}
+	
+function cuentaatras(){
+	 devolvercero(minutos,segundos);
+        segundos = segundos % 60;
+		document.form_reloj1.reloj1.value = ceromin+minutos+':'+ceroseg+segundos;
+         if (minutos ===0 && segundos ===0){
+            //alert ("Se agotó su tiempo - fin de la partida"); //se acabó el tiempo de la partida
+			//cancelarPartida();
+			//clearTimeOut(llamada);
+			document.getElementById('status').innerHTML='<b>Se acabó el tiempo de la partida. Fin de Partida </b>';
+			document.getElementById('fen').innerHTML='';
+			return true;
+        }
+        if (segundos ==0){
+            minutos --;
+            segundos+=60;   
+        }   
+        segundos --;
+	    var llamada = setTimeout(cuentaatras,1000);
+}
+
+function devolvercero(minutos,segundos){
+        if (minutos<10){
+            ceromin='0';
+        }
+        if (segundos<10){
+            ceroseg='0';
+           
+        }else {
+            ceroseg='';
+        }
+         return ceroseg;return ceromin;
+    }
+	
+//primer cronometro del primer jugador 	
+	function cuentaatras2(){
+	 devolvercero2(minutos2,segundos2);
+        segundos2 = segundos2 % 60;
+		document.form_reloj2.reloj2.value = ceromin2+minutos2+':'+ceroseg2+segundos2;
+         if (minutos2 ===0 && segundos2 ===0){
+			document.getElementById('status').innerHTML='<b>Se acabó el tiempo de la partida. Fin de Partida </b>';
+			document.getElementById('fen').innerHTML='';
+			return true;
+        }
+        if (segundos2==0){
+            minutos2 --;
+            segundos2+=60;   
+        }   
+        segundos2 --;
+	    var llamada2 = setTimeout(cuentaatras2,1000);
+}
+
+function devolvercero2(minutos2,segundos2){
+        if (minutos2<10){
+            ceromin2='0';
+        }
+        if (segundos2<10){
+            ceroseg2='0';
+           
+        }else {
+            ceroseg2='';
+        }
+         return ceroseg2;return ceromin2;
+    }
+	
+	// cronometro contrincante
+		function cuentaatras3(){
+	    devolvercero3(minutos3,segundos3);
+        segundos3 = segundos3 % 60;
+		document.form_reloj3.reloj3.value = ceromin3+minutos3+':'+ceroseg3+segundos3;
+         if (minutos3 ===0 && segundos3 ===0){
+			document.getElementById('status').innerHTML='<b>Se acabó el tiempo de la partida. Fin de Partida </b>';
+			document.getElementById('fen').innerHTML='';
+			return true;
+        }
+        if (segundos3 ==0){
+            minutos3 --;
+            segundos3+=60;   
+        }   
+		
+        segundos3 --;
+	    var llamada3 = setTimeout(cuentaatras3,1000);
+}
+
+function devolvercero3(minutos3,segundos3){
+        if (minutos3<10){
+            ceromin3='0';
+        }
+        if (segundos3<10){
+            ceroseg3='0';
+           
+        }else {
+            ceroseg3='';
+        }
+        return ceroseg3;return ceromin3;
+    }
+	
+  //inician los 2 relojes OK es el sitio correcto
+  mueveReloj();
+  cuentaatras(); 
+  cuentaatras2();
+  cuentaatras3();
+  
+//función inicial de carga y configuración del ajedrez
+var init = function() {
+
+//////////////////////////////////////
+ // EL SERVIDOR DEL CHAT PRIVADO
+ //////////////////////////////////////
+ 
+ socket = new WebSocket(wsUri);
+ var messages = document.getElementById("messages");
+ /*
+	0	CONNECTING	Socket creado. pero no abierto
+    1	OPEN	    conexión abierta y preparada
+    2	CLOSING	    conexión se está cerrando
+    3	CLOSED	    la conexión está cerrada
+	*/
+
+	estado=socket.readyState;
+	var cadestado="Estado: "+estado+ " CONNECTING";
+	if (estado == 0) { 
+	   cadena="Estado:  <b>"+estado+ " </b> CONECTADO pero no ABIERTO <br>";
+	}
+	if (estado == 1) { 
+	    cadena="Estado: "+estado+ " ABIERTO \n";
+	}
+	if (estado == 2) { 
+	   cadena="Estado: "+estado+ " CERRANDO \n";
+	}
+	if (estado == 3) { 
+	   cadena="Estado: "+estado+ " CERRADO \n";
+	   }
+
+    if (socket.readyState == WebSocket.OPEN) {
+        socket.onopen();
+    }
+    if (socket.readyState == WebSocket.CLOSED) {
+	  
+	}
+
+ socket.onopen = onOpen();
+ socket.onmessage = onMessage;
+ socket.onclose = onClose;
+ socket.onerror = onError;
+ 
+  //configuración del tablero del juego
+  var board2 = ChessBoard('board2', {
+  draggable: true,       // las piezas del tablero se pueden arrastrar a las casillas
+  dropOffBoard: 'trash', // las piezas que caigan del tablero se retiran del tablero
+  showNotation: true, 
+  sparePieces: true,  //mostrar las piezas de repuesto
+  moveSpeed: 'fast',  //interviene en la velocidad de animación lenta fast ->rápida
+  snapbackSpeed: 500, //interviene en la velocidad de animación
+  snapSpeed: 100,      //interviene en la velocidad de animación   
+  onSnapEnd: onSnapEnd,
+  onDragStart: onDragStart, //deja mover la ficha la hecha para atrás 
+  onDrop: onDrop, //deja mover la ficha la hecha para atrás, se dispara cuando cae una pieza 
+ }) 
+ 
+ board=board2;
+ //ARRANCAMOS EL JUEGO POR DEFECTO 
+ board.start();  
+  
+ var play = true; //nueva
+ var colorj1 = "w";
+ var colorj2 = "b";
+
+ 
+$('#startBtn').on('click', board2.start);
+$('#clearBtn').on('click', board2.clear);
+$('#destroyBtn').on('click', board2.destroy);
+$('#startPositionBtn').on('click', board2.start);
+
+if (jugador2==""){
+	board.orientation('black');
+}else{
+	board.orientation('white');
+}
+
+function set_turn(chess, color) {
+    //alert("entra 2");
+    var tokens = chess.fen().split(' ');
+    tokens[1] = color;
+    chess.load(tokens.join(' '));
+}
+
+
+function onDragStart (source, piece, position, orientation) {
+	game.setTurn(turno);
+	//alert (game.turn());
+	if (game.turn() == colorj1){
+		if (game.game_over()) return false
+		if (piece.search(/^b/) !== -1)return false
+	} else if (game.turn() == colorj2){
+		if (game.game_over()) return false
+		if (piece.search(/^w/) !== -1)return false
+	} else{
+		return true;
+	}
+ }
+
+function onDrop(source, target) {
+  
+  // ver si el movimiento es legal OK
+  var move = game.move({
+    from: source,
+    to: target,
+    promotion: 'q' // NOTE: always promote to a queen for example simplicity
+  });
+  //alert("movimiento "+move+"source="+source+" target="+target);
+  // illegal move
+  if (move === null) {
+     return 'snapback';  
+  }
+  clickShowPositionBtn(); //esta es extra
+}
+
+// actualizar la posición del tablero después del chasquido de piezas para enroque, al paso, promoción de peón
+function onSnapEnd() {
+  board.position(game.fen());
+}
+
+//posicion actual de la ficha cuando el jugador mueve ficha
+function clickShowPositionBtn() {
+  var saved_positions = game.fen();  
+  document.getElementById('fen').innerHTML=saved_positions;
+  if (turno =='w'){
+	game.setTurn('b');
+	turno = 'b';
+  }else{
+	game.setTurn('w');
+	turno = 'w';
+  }
+  enviarFen(turno);
+  updateStatus();
+ }
+
+function updateStatus () {
+ //alert('updateStatus');
+  var status = '';
+  var moveColor = 'Blancas';
+  if (game.turn() === 'b') 
+  {
+    moveColor = 'Negras';
+  }
+  status = moveColor + ' mueven';
+  document.getElementById('status').innerHTML=status;
+  
+  // Jaque Mate?
+  if (game.in_checkmate()) 
+  {
+     status = 'Fin del Juego, ' + moveColor + ' está en Jaque Mate.';
+  }
+  else if (game.in_draw()) {
+    
+	status = 'Juego Finalizado. Jaque Mate';
+	//ejecutar método django para actualizar el elo OJO
+	 //alert("PUNTUACION ELO. JUEGO TERMINADO");
+	 var nombre="";
+	 var movimiento = "";
+	 var colorficha=""; 
+	 if (moveColor=="Negras"){
+	    nombre=`{{ contrincante }}`;
+		colorficha=moveColor;
+	 }
+	 if (moveColor=="Blancas"){
+	    nombre=`{{ user.username }}`;
+		colorficha=moveColor;
+	 }
+     
+	 //alert("jugador Ganador="+nombre+" color ficha "+colorficha);
+     var estado='ganador';
+	//se crea el objeto JSON para el FEN  
+        datos={
+	        'ganador': nombre,
+			'estado': estado,
+	    }
+        socket.send(JSON.stringify(datos));
+	
+  }
+  else {
+    status = moveColor + ' mueven';
+    // Jaque?
+    if (game.in_check()) {
+      status += ', ' + moveColor + ' están en jaque';
+    }
+  }
+  
+  $status.html(status);
+  $fen.html(game.fen());
+  $pgn.html(game.pgn());
+  
+}
+  updateStatus();
+};//FIN init
+ 
+// ------------------------------ ojo fin del init  -------------------------------------
+
+ function onOpen()
+  {
+	var cestado=socket.readyState;
+	cadena="<b>Sala Privada del Chat Abierta</b><br>";
+	document.getElementById("messages").innerHTML +=cadena;
+  }
+  
+  function onClose(evt) {
+	var cestado=socket.readyState;
+	cadena="Estado:  <b>"+cestado+ " </b> CLOSE <br>";
+	document.getElementById("messages").innerHTML +=cadena;
+	//alert('Onclose called' + evt+' code is '+evt.code+'  reason is ' + evt.reason+'  wasClean  is' + evt.wasClean);
+	cadena='Onclose called' + evt+' code is '+evt.code+'  reason is ' + evt.reason+'  wasClean  is' + evt.wasClean;
+	document.getElementById("messages").innerHTML +=cadena;
+    }
+	
+  function onError(evt) {
+    alert("ONERROR   "+evt.data);  
+	var cestado=socket.readyState;
+	cadena="Estado:  <b>"+cestado+ " </b> ERROR "+evt.data+"<br>";
+	document.getElementById("messages").innerHTML +=cadena;
+    }
+	
+   //lee los mensajes (JSON) enviados por el websocket
+  function onMessage(e)
+  {
+    const datos = JSON.parse(e.data); //recibimos el mensaje en formato JSON
+	//alert("chat  "+datos.chat);
+	//alert("ONMESSAGE ---- JSON nombre==="+datos.nombre+" mensaje==== "+datos.mensaje);
+    document.querySelector('#messages').value += (datos.mensaje + '\n');
+	//alert("usuario "+usuario+" datos.nombre "+datos.nombre);
+	if (datos.chat=='si'){
+	   if (usuario!= datos.nombre)
+	   {
+	     messages.innerHTML += `<span class="text-success">${datos.nombre} </\span> ${datos.mensaje} <br/\>`; 
+	   }
+	}
+	
+	//para channels con los tableros
+	if (datos.chat=='no'){
+    	//alert("ficha "+colorficha);		
+        //board.orientation(game.turn() === 'b' ? 'black' : 'white');
+		
+		var jugador=datos.jugador;
+		var movimiento=datos.fen;
+		var zturno=datos.turno;
+		var zcolor=datos.color;
+		//alert("---jugador---"+jugador+"  usuario "+usuario+"  movimiento="+movimiento+ "COLOR="+zcolor+" Turno recibido "+zturno);
+	    document.getElementById('fen').innerHTML=movimiento;
+		
+		
+		game.move(movimiento);
+		board.position(movimiento); //actualiza en el otro tablero
+		color = colorficha;
+		//game.setTurn(zturno);
+		game.setTurn("black");
+		
+		
+		
+		//alert("lee POsicion como objeto"+board.position());
+		//alert("lee POsicion como FEN"+board.fen());
+		//game.validate_fen(movimiento);
+		//game.load(movimiento);
+		//board.position(game.fen());
+	
+	}
+	
+  }
+
+   function chatear(){
+    const text = document.getElementById("message_text").value;
+        //alert("text del JSON="+text); //aqui si entra
+        //var sala=`{{sala}}`;
+		//alert(sala);
+        //se crea el objeto JSON   
+        datos={
+	        'nombre': usuario,
+		    'mensaje': text,
+			'chat': 'si'
+	    }
+        socket.send(JSON.stringify(datos));
+        //OJO las comillas del innerHTML obligatorias que sean las utilizadas
+        messages.innerHTML += `<span class="text-primary">Tu:</\span> ( {{ user.username }} )  ${text} <br/\>`; 
+    }
+
+ //enviar el JSON con la cadena FEN 
+ function enviarFen(xturno){
+    //alert("ENVIAR FEN "+xturno);
+	var nombre=`{{ user.username }}`;
+	var movimiento = game.fen();  
+	var ficha=game.turn();
+	var ficha="blanca";
+    //alert("color ficha enviado "+ficha);
+    //se crea el objeto JSON para el FEN  
+        datos={
+	        'color': ficha, 
+			'turno' : xturno,
+		    'fen': movimiento,
+			'chat': 'no',
+			'jugador': nombre,
+	    }
+        socket.send(JSON.stringify(datos));
+ }
+
+$(document).ready(init); 
+</script>
+
+<script>
+
+function refrescartablero1() {
+  $("#board2").css('opacity', 0.4);
+}
+function refrescartablero2() {
+  $("#board2").css('opacity', 1.0);
+}
+
+</script>
+
+<script>
+
+
+function iniciarPartida() {
+document.getElementById('whiteOrientationBtn').style.display = "none";
+document.getElementById('blackOrientationBtn').style.display = "none";
+document.getElementById('startBtn').style.display = "none";
+document.getElementById('cancelar').style.display = "block";
+}
+
+  function cancelarPartida(){
+	 location.href ="http://localhost:8000/";
+   }
+   
+   function rendirse(){
+     document.getElementById('status').innerHTML='Se rinde: [ {{ user.username }} ] ';
+     board.clear(true);
+     document.getElementById('fen').innerHTML='';
+	 location.href ="http://localhost:8000/";
+   }
+ 
+</script>
+
+{% endblock content %}

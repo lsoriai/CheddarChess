@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>Ajedrez</title>
+<link rel="stylesheet" href="{% static 'css/chessboard-0.3.0.css' %}">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>-->
+<script src="{% static 'ajedrez_app/chessboardjs/js/chessboard-0.3.0.js' %}"></script> <!-- la ruta buena -->
+<script src="{% static 'ajedrez_app/chessboardjs/js/chess.js' %}"></script> <!-- la ruta buena -->
+{% endblock %}
+
+{% block content %}
+<center>
+<br><br><br>
+<font color="navy" size="5" face="Comic Sans MS,Arial,Verdana">PARTIDAS EN JUEGO MAS VISTAS:</font>
+<br>
+
+<!-- SI HAY PARTIDAS EN JUEGO -->
+{% if numpartidas == None %} 
+<center>
+   <font color="black" size="4" face="Comic Sans MS,Arial,Verdana">PARTIDAS PÚBLICAS EN JUEGO</font>
+</center>
+<br>
+<form method="POST" name="formulario1" class="post-form" action="/jugar/">
+{% csrf_token %}
+<table border="1" class="table table-hover" bordercolor="orange" cellspacing="1" cellpadding="1" id="ranking">
+<thead> 
+<tr>
+	<th class="bg-info" style="text-align: center">Num. Partida</th>
+	<th class="bg-info" style="text-align: center">Jugador blancas</th>
+	<th class="bg-info" style="text-align: center">Foto</th>
+	<th class="bg-info" style="text-align: center">Jugador Negras</th>
+	<th class="bg-info" style="text-align: center">Foto</th>
+	<th class="bg-info" style="text-align: center">Num. Espectadores</th>
+	<th class="bg-info" style="text-align: center">Operaciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+	<!--{% for partida in partidas %}
+	{% for user in usuarios %}
+	{% if user.id == partida.jugador1_id %}
+	<td class="#9c9c9c" style="text-align: center">{{ forloop.counter }}</td>
+	<td class="#9c9c9c" style="text-align: center">{{ user.username }}</td>
+	<td class="#9c9c9c" style="text-align: center"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='20' width='20' ></td>
+	<td class="#9c9c9c" style="text-align: center">{{ fila.jugador2 }}</td>
+	<td class="#9c9c9c" style="text-align: center"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='20' width='20' ></td>
+	<td class="#9c9c9c" style="text-align: center">{{ numEspectadores }}</td>
+	<td class="#9c9c9c" style="text-align: center"><button type="submit" id="iniciarpartida" class="btn btn-lg btn-warning" style="font-size:12pt">Ver Partida</button></td>
+	{% endif %}
+    {% endfor %}
+	{% endfor %} -->
+	
+	<td class="#9c9c9c" style="text-align: center">1</td>
+	<td class="#9c9c9c" style="text-align: center">Jose</td>
+	<td class="#9c9c9c" style="text-align: center"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='20' width='20' ></td>
+	<td class="#9c9c9c" style="text-align: center">Rebeca</td>
+	<td class="#9c9c9c" style="text-align: center"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='20' width='20' ></td>
+	<td class="#9c9c9c" style="text-align: center">0</td>
+	<td class="#9c9c9c" style="text-align: center"><button type="submit" id="iniciarpartida" class="btn btn-lg btn-warning" style="font-size:12pt">Ver Partida</button></td>
+	
+	
+	
+</tr>
+	
+ </tbody>
+ </table>
+</form>
+{% endif %}
+
+<!-- fondo de color gris claro -->
+<div style="height:134px; background-color:#EAECEE;" >
+     <div style="min-height:134px; height:134px; background-color:#EAECEE;">  
+     </div> 
+</div> 
+
+<!--------------- fin del código HTML5  -->
+
+<script>
+
+var init = function() {
+  
+};//init
+
+$(document).ready(init); 
+
+</script>
+
+{% endblock content %}

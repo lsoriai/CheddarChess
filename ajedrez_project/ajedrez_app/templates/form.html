@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block head_extra %}
+{{ form.media }}
+{% endblock head_extra %}
+
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+<h1>{{ tittle}}</h1><hr/>
+<form class='navbar-form navbar-right' method='POST' action='{% url 'login' %}' enctype='multipart/form-data'>{% csrf_token %}
+{{ form|crispy }}
+			<!--<div class='form-group'>
+			   <input type='text' class='form-control' name='username' placeholder='nombre del usuario'/>
+			</div>
+			<div class='form-group'>
+			   <input type='password' class='form-control' name='password' placeholder='Clave'/>
+			</div> -->
+			<input type="submit" class='btn btn-default'>
+			</form>
+</div>
+{% endblock content%}

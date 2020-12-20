@@ -41,7 +41,9 @@ urlpatterns = [
 	url('about/', views.about,name='about'),
 	url('contact/', views.contact,name='contact'),
 	url('configurar/', views.configurar,name='configurar'),
-	url('jugar/', views.jugar,name='jugar'),
+	#url('jugar/', views.jugar,name='jugar'),
+	#url(r'^(?P<id>\d+)/jugar$', views.jugar, name='jugar'),
+	path('<int:idpartida>/<str:pcontrincante>/jugar', views.jugar, name='jugar'),
 	url('jugar1/', views.jugar1,name='jugar1'),  # llama a jugar contra la máquina
 	url('filtrocontrincante/', views.filtrocontrincante,name='filtrocontrincante'),
 	url('contrincante/', views.contrincante,name='contrincante'),
@@ -71,12 +73,14 @@ urlpatterns = [
 	url(r'^rss/main', LatestPostsFeed()), 
 	url(r'^rss', LatestPostsFeed()), 
 	path('canalRSS', views.canalRSS, name='canalRSS'),
+	path('canalAprende', views.canalAprende, name='canalAprende'),
 	
 	url('desconectar/', views.desconectar,name='desconectar'),
 	url('conectar/', views.conectar,name='conectar'),
 	url('desconectarActual/', views.desconectarActual,name='desconectarActual'),
 	url('rechazarSolicitud/', views.rechazarSolicitud,name='rechazarSolicitud'),
 	path('<str:room_name>/', views.room, name='room'),
+	url('guardar_tablero/', views.guardar_tablero,name='guardar_tablero'),
 	
 ] 
 #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

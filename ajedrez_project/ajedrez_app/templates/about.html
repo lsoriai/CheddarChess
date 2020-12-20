@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<br>
+<h3>{{ title }}</h3>
+<br>
+<font color="#696969" size="7" face="Comic Sans MS,Arial,Verdana">Acerca de</font>
+<br>
+<ul>
+    <li><font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">Alumna: Leyre Soria Indiano</font></li>
+    <li><font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">Curso 2018</font></li>
+	<li><font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">email... leyre.soria.indiano@gmail.com</font></li>
+	<li><font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">Universidad... Juan Carlos Campus de Fuenlabrada</font></li
+</ul>
+<br><br>
+<a href="/" class="lang-logo">
+      <img src="{% static 'ajedrez_app/bootstrap/imagenes/leyre.png'%}" height='174' width='180' >
+    </a>
+<br><br>
+<hr style="background-color: orange; height: 2px; border: 0;">
+<br><br>
+<center>
+<a href="/" class="lang-logo">
+      <img src="{% static 'ajedrez_app/bootstrap/imagenes/universidad.jpg'%}" height='320' width='420' >
+    </a>
+</center>
+<br><br>
+{% endblock content %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block  body %}
+
+<br/>
+<form  class="form-inline">
+<div  class="form-group mx-sm-3 mb-2">
+<label  for="inputPassword2"  class = “sr-only” > Contraseña </ label >
+
+< tipo de entrada  = "texto" clase = "control de formulario" marcador de posición = "pegar enlace"  
+
+nombre = "url" >
+
+</ div >
+
+< button  type = "submit"  class = "btn btn-primary mb-2" > Buscar </ button >
+
+</ formulario >
+
+{% if  feed %}
+
+< h2 > {{ feed . alimentar . título }} </ h2 >
+
+{% si se  alimenta . entradas %}
+
+{% para la  entrada  en el  feed . entradas %}
+
+< div  class = "tarjeta" >
+
+< div  class = "card-header" >
+
+Alimentar
+
+</ div >
+
+< div  class = "card-body" >
+
+< h5  class = “card-title” > Título: {{ entrada . título }} </ h5 >
+
+< p  class = “card-text” > Descripción: {{ entrada . descripción }} </ p >
+
+< Un  href = “{{}} entry.link”  clase = “btn btn-primaria” > Visitar enlace </ a >
+
+</ div >
+
+</ div > < p > {{ entrada . publicado }} </ p >
+
+ 
+
+
+{% endfor %}
+
+{% endif %}
+
+{% else %}
+
+< Br  />
+
+< p > Ingrese su fuente RSS favorita arriba. </ p >
+
+{% endif %}
+
+ 
+
+
+{{ feed2 }}
+
+ 
+
+
+{% endblock %}

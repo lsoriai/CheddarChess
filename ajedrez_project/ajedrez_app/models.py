@@ -56,7 +56,7 @@ class Jugador(models.Model):
 	
 class Pieza(models.Model):   
 	id = models.AutoField(primary_key=True)
-	nombre_pieza=models.CharField(max_length=15)
+	nombre_pieza=models.CharField(max_length=200)
 	num_pieza=models.IntegerField()
 	foto=models.ImageField(upload_to='images/', null=True)
 	color=models.CharField(max_length=7)
@@ -74,7 +74,10 @@ class Partida(models.Model):
 	chat_id=models.IntegerField()
 	resultado=RESULTADO_CHOICES
 	estado=ESTADO_CHOICES
-	jugador = models.OneToOneField(Jugador, null=True, blank=True,on_delete=models.PROTECT) #requerido desde django 2.0
+	#jugador = models.OneToOneField(Jugador, null=True, blank=True,on_delete=models.PROTECT) #requerido desde django 2.0
+	jugador1 = models.ForeignKey(Jugador, related_name='jug1',null=True, blank=True,on_delete=models.PROTECT) #Realiza la petición o solicitud
+	jugador2 = models.ForeignKey(Jugador, related_name='jug2',null=True, blank=True,on_delete=models.PROTECT) #recibe/responde a la petición o solicitud
+	
 
 class Tablero(models.Model):   
 	id = models.AutoField(primary_key=True)

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br><br>
+<font color="#696969" size="7" face="Comic Sans MS,Arial,Verdana">Contacta con nosotros</font>
+<br><br>
+<script>
+function myMap() {
+    var mapOptions = {
+        center: new google.maps.LatLng(40.33, -3.84),
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.HYBRID
+    }
+var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+}
+</script>
+
+<center>
+<div id="map" style="width:860px;height:680px">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d97323.4706691616!2d-3.841426324048529!3d40.33439352882304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2ses!4v1531151542994" width="860" height="680" frameborder="0" style="border:0" allowfullscreen></iframe>
+</center>
+<br><br>
+<div style="height:90px; background-color:#EAECEE;" >
+     <div style="min-height:90px; height:90px; background-color:#EAECEE;">  
+     </div> 
+</div> 
+{% endblock %}

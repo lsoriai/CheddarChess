@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<title>Contrincante</title>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<!--anulada la barra vertical del scroll -->
+<style type="text/css">
+	body
+	{
+	overflow-y: scroll;
+	overflow-x: scroll;
+	}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<!-- fondo de la pantalla -->
+<!--<img alt="full screen background image" src="{% static 'app/bootstrap/imagenes/seda.jpg'%}" id="full-screen-background-image" /> -->
+<title>Ajedrez</title>
+<h3>{{ title }}</h3>
+<br><br><br>
+<center>
+<font color="#696969" size="5" face="Comic Sans MS,Arial,Verdana">PARTIDAS CREADAS A LA ESPERA DE OPONENTE</font>
+</center>
+<br>
+
+<center>
+<form method="POST" name="formulario" class="post-form" action="/iniciarjuego/">
+{% csrf_token %}
+<button type="submit" id="iniciarpartida" class="btn btn-lg btn-warning" style="font-size:12pt">Configurar Partida</button></td>
+</form>
+</center>
+
+{{ my_html|safe }}
+
+{% if request.user.is_authenticated %}
+<!--<center>
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='90' width='80' >
+<font color="#696969" size="6" face="Comic Sans MS,Arial,Verdana">[ {{ user.username }} ] </font>
+<img src="{% static 'ajedrez_app/bootstrap/imagenes/españa.jpg'%}" height='90' width='60'>
+</center>-->
+<hr style="background-color: orange; height: 2px; border: 1; width:100%;"> 
+
+
+<form method="POST" name="formulario1" class="post-form" action="/filtrocontrincante/">
+{% csrf_token %}
+<table width="1140" border="0">
+<tr height="78">
+<td align="center"><font color="#696969" size="4"><b>ELO:</b></font></td>
+<td align="center"><font color="#696969" size="4">&nbsp;&nbsp;&nbsp; Mín.</font></td>
+<td align="center"><font color="#696969" size="4"><input type="number" name="elo" id="elo" min="700" max="3000"></font></td>
+<td align="center"><font color="#696969" size="4">&nbsp;&nbsp;&nbsp; Max. </font></td>
+<td align="center"><font color="#696969" size="4"><input type="number" name="elo1" id="elo1" min="700" max="3000"></font></td>
+<td align="center">
+  <button type="submit" id="filtrado" class="btn btn-lg btn-warning" style="font-size:12pt">Filtrar por ELO</button>
+</td>
+</tr>
+</table>
+</form>
+<br>
+
+<!-- <form method="POST" name="formulario3" class="post-form" action="/jugar/">-->
+<form method="GET" name="formulario3"  action="">
+<!--<form method="POST" name="formulario3" class="post-form" action="/jugarcontrincante/">-->
+{% csrf_token %}
+
+<!--<table border="0" class="table table-hover" frame="border" rules="none">-->
+<table border="1" class="table table-hover" bordercolor="orange" cellspacing="1" cellpadding="1">
+<thead> 
+<tr>
+<!--<th class="bg-info">Posición</th>-->
+<th class="bg-info">Nombre del Jugador</th>
+<th class="bg-info">Foto</th>
+<th class="bg-info">Pais</th>
+<th class="bg-info">ELO</th>
+<th class="bg-info">Ganadas</th>
+<th class="bg-info">Perdidas</th>
+<th class="bg-info">Empatadas</th>
+<!--<th class="info">Blancas</th>
+<th class="info">Negras</th>-->
+<th class="bg-info">Pública</th>
+<th class="bg-info">Tiempo</th>
+<th class="bg-info">Operaciones</th>
+<th style="display:none;"></th>
+</tr>
+</thead>
+<tbody>
+
+{% for fila in usuarios %}
+<tr width="1140">
+    {% if usuariocurrent != fila.user %}  <!-- PARA EVITAR JUGAR CONSIGO MISMO -->
+       {% for partida in partidas %}
+             {% if partida.jugador1_id == fila.id %}
+						<td class="#9c9c9c">{{ fila.user }}</td>
+						<td class="#9c9c9c"><img src="{% static 'ajedrez_app/bootstrap/imagenes/kevin.JPG'%}" height='40' width='40' ></td>
+						<td class="#9c9c9c"><img src="{% static 'ajedrez_app/bootstrap/imagenes/españa.jpg'%}" height='40' width='40' ></td>
+						<td class="#9c9c9c"><b><font size="4" color="#696969">{{ fila.elo }}</font></b></td>
+						<td class="#9c9c9c">{{ fila.ganadas }}</td> 
+						<td class="#9c9c9c">{{ fila.perdidas }}</td>
+						<!--<td class="info">{{ fila.empatadas }}</td>
+						<td class="info">{{ fila.empatadas }}</td>-->
+						<td class="#9c9c9c">{{ fila.empatadas }}</td>
+						<td class="#9c9c9c" align="left">SI</td>
+						<td class="#9c9c9c" align="left">NO</td>
+						<!--<td class="#9c9c9c"> <button type="submit" id="iniciarpartida" class="btn btn-lg btn-warning" style="font-size:12pt">Jugar</button></td>-->
+						<td style="display:none;">{{ partida.id }}</td>
+						<td class="#9c9c9c"> <a href="{% url 'jugar' idpartida=partida.id pcontrincante=nombreusuario %}" id="iniciarpartida" 
+							class="btn btn-lg btn-warning" style="font-size:12pt">Jugar</a></td>
+				{% endif %}
+			</tr>	
+		{% endfor %}
+	{% endif %}
+
+{% endfor %}
+
+ </tbody>
+</table>
+{% endif %}
+<input type="hidden" id="txtcontrincante" name="txtcontrincante" value="{{ nombreusuario }}">
+</form>
+
+<!--<center>-->
+{% if request.user.is_authenticated %}
+  {% if usuarios.has_other_pages %}
+<font size="3">
+  <ul class="pagination" style="padding-left:80px;">
+    {% if usuarios.has_previous %}
+      <li><a href="?page={{ usuarios.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in usuarios.paginator.page_range %}
+      {% if usuarios.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if usuarios.has_next %}
+      <li><a href="?page={{ usuarios.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+</font>	
+{% endif %}
+{% endif %}
+<!--</center>-->
+
+<!--<hr style="background-color: orange; height: 2px; border: 0;">-->
+
+<script>
+
+$(document).ready(function(){
+	
+	var velo="";
+    var velo1="";	
+
+	
+	$("#tiempo").click(function(event){ //$("input[type=radio]").click(function(event){
+          
+            var valor = $(event.target).val();
+			//alert("ojo"+valor);
+          
+            if(valor == 'si'){
+                 $("#minutos").show();
+            }
+			else {
+                $("#minutos").hide();
+            }
+    });
+	
+	$("#tiempo1").click(function(event){ 
+          
+            var valor = $(event.target).val();
+			//alert("ojo"+valor);
+          
+            if(valor == 'no'){
+                $("#minutos").hide();
+            }
+    });
+	
+   
+	
+	$("#elo").blur(function(){
+      velo = document.getElementById("elo").value;
+	  //alert("blur elo: "+velo);
+	});
+	
+	/*
+	$('#elo').on('click', function(){ 
+	 velo = document.getElementById("elo").value;
+	 //alert("click"+velo);
+	});
+	*/
+	
+	/*
+	$('#elo1').on('click', function(){ 
+       velo1 = document.getElementById("elo1").value;
+	   //alert("click"+velo1);
+    }); 
+	*/
+	$('#elo1').blur(function(){
+	   velo1 = document.getElementById("elo1").value;
+	   //alert("blur elo1: "+velo1);
+	}); 
+	
+});
+</script>
+<style>
+   body {overflow-y:hidden!important;}
+</style>
+
+{% endblock content %}
+
+
+
+
+	
+

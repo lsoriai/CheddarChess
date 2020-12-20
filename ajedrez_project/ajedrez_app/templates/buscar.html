@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br><br><br><br><br>
+<select id="id_usuario">
+  <option>Elige un Autor</option>
+    {% for autor in autores %}   {# autores es el contexto #}
+      <option value="{{autor.id}}">{{autor.first_name}}</option>
+    {% endfor %}
+</select>	
+<br><br>
+
+<select name="auto" id="auto" onchange="get_vehicle_colors();">
+<option value="">-- select a vehicle type --</option>
+<option value="car">Car</option>
+<option value="truck">Truck</option>
+<option value="motorcycle">Motorcycle</option>
+</select>
+
+<select name="color" id="color">
+<option value="">-- choose a vehicle first--</option>
+</select>
+
+<br><br>
+<!-- ESTA CAPA ES PARA AJAX-->
+<div id="datos">
+
+</div>
+
+<br><br>
+
+{% endblock content %}
+
+{% macro js %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("p").click(function(){
+        $(this).hide();
+		alert("hola1");
+      });
+    });
+  </script>
+{% endmacro %}
+
+<!-- EL BLOQUE AJAX-->
+{% block javascripts %}
+<script>
+   alert("hola");
+   $('select').on('change',inicio);  //al cambiar el combobox que coja el id seleccionado
+   function inicio() {
+   var id = $(this).val();
+   alert("hola1");
+   console.log(id);
+   alert(id);
+   $.ajax({
+       data: {'id':id}, // datos a pasar es un diccionario para enviar a la url
+	   url: '/busqueda_ajax/', //vista para responder al servidor en ésta url
+	   type: 'get',
+	   success: function(data){
+	      console.log(data);
+		  var html = ""
+		  for(var i=0;i<data.length; i++)
+		  {
+		      html += '<ul><li>'+data[i].fields.name+'</li><li>'+data[i].fields.publication_date+'</li><ul>'
+	      }
+		  $('#datos').html(html);
+   });
+   
+   }
+
+   // Auditores de eventos pasivos. implementado en navegadores desde 2016
+// marcamos el controlador de eventos como pasivo para que la página sea más receptiva
+  jQuery.event.special.touchstart = 
+  { 
+   setup: function( _, ns, handle )
+   { 
+     if ( ns.includes("noPreventDefault") ) 
+	 { 
+	    this.addEventListener("touchstart", handle, 
+	    {
+		   passive: false }); 
+		} 
+		else { 
+		 this.addEventListener("touchstart", handle, { 
+		    passive: true 
+		 }); 
+		}
+		}
+		alert("hola")
+  };
+
+  addEventListener(document, "touchstart", function(e) {
+    console.log(e.defaultPrevented);  // will be false
+    e.preventDefault();   // does nothing since the listener is passive
+    console.log(e.defaultPrevented);  // still false
+	alert("hola")
+  }, Modernizr.passiveeventlisteners ? {passive: true} : false);
+
+   $("#id_usuario").change( function () {
+   alert("hola")
+   var id = $(this).val();
+   console.log(id);
+   alert(id);
+   $.ajax({
+       data: {'id':id}, // datos a pasar es un diccionario para enviar a la url
+	   url: '/busqueda_ajax/', //vista para responder al servidor en ésta url
+	   type: 'get',
+	   success: function(data){
+	      console.log(data);
+		  var html = ""
+		  for(var i=0;i<data.length; i++)
+		  {
+		      html += '<ul><li>'+data[i].fields.name+'</li><li>'+data[i].fields.publication_date+'</li><ul>'
+	      }
+		  $('#datos').html(html);
+   });
+   
+   }
+ 
+</script>
+{% endblock %}

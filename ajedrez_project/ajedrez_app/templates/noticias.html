@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+<h3>{{ title }}</h3>
+<h1><p>Últimas Noticias</p></h1>
+
+{{ my_html|safe }}
+
+<p>
+<h3>Valsecchi gana el Abierto de Viena; Stanc Campeón de Austria</h3><br>
+<h5>por Klaus Besenthal   Me gusta! | 0 Comentarios Me gusta!</h5><br>
+<h4>26/08/2019 – Entre el 17 y el 24 de agosto se disputó el XXI Abierto de Viena en la capital austríaca. 
+Se coronó campeón el gran maestro intaliano Alessio Valsecchi como único jugador con 7,5/9 puntos. 
+A continuación se clasificó un grupo de 10 jugadores con 7/9 puntos cuya mejor valoración de desempate tenía el gran 
+maestro cróata Mladen Palac. Gabriel Bick de EE. UU. ocupó el tercer puesto. A la vez el mejor jugador austríaco 
+automáticamente conquistó el título del Campeón de Austria. GM Nikolaus Stanec se llevó ese título, respectivamente. 
+<br><br>
+Foto: Betti Plach / Federación Austíaca de Ajedrez
+</h4>
+</p>
+
+<p>Los resultados de la novena y última ronda (los mejores)</p>
+<img src="../static/images/tabla1.jpg"/>
+
+{% endblock content %}

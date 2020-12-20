@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Ajedrez</title>
+		<!--<link href="ajedrez_app/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/chessboard-0.3.0.css" />
+		<script type="text/javascript" src="ajedrez_app/bootstrap/Scripts/jquery-2.2.3.min.js" rel="stylesheet"></script>
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	    <script type="text/javascript" src="ajedrez_app/bootstrap/Scripts/bootstrap.js" rel="stylesheet"></script>
+		<script src="js/chess.min.js"></script>
+        <script src="js/chessboard-0.3.0.js"></script>-->
+		
+		<link href="../static/ajedrez_app/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="../static/css/chessboard-1.0.0.css" />
+		<script type="text/javascript" src="../static/ajedrez_app/bootstrap/Scripts/jquery-2.2.3.min.js" rel="stylesheet"></script>
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	    <script type="text/javascript" src="../static/ajedrez_app/bootstrap/Scripts/bootstrap.js" rel="stylesheet"></script>
+		<script src="../static/js/chess.min.js"></script>
+        <script src="../static/js/chessboard-1.0.0.js"></script>
+    </head>
+<body>
+<center>
+<br><br>
+<!--<img src="img/chesspieces/wikipedia/bB.png"/>-->
+<!--<img src="../static/img/chesspieces/wikipedia/bB.png"/>
+<img src="../static/img/chesspieces/wikipedia/bK.png"/>
+<img src="../static/img/chesspieces/wikipedia/bK.png"/>
+<img src="../static/img/chesspieces/wikipedia/bN.png"/>
+<img src="../static/img/chesspieces/wikipedia/bP.png"/>
+<img src="../static/img/chesspieces/wikipedia/bQ.png"/>
+<img src="../static/img/chesspieces/wikipedia/bR.png"/>-->
+<br>
+<!-- tabla principal -->
+<table border=3">
+<tr>
+<td>
+
+<table cellspacing="5" cellpadding="5" border="1">
+<tr>
+<td><button id="startBtn" class="btn btn-primary" >Iniciar Partida</button></td> 
+<td><button id="clearBtn" class="btn btn-success" >Limpiar</button></td> 
+<td><button id="destroyBtn" class="btn btn-info" >Ocultar Tablero</button></td> 
+<td><button id="showOrientationBtn" class="btn btn-warning" >Orientación actual</button></td> 
+<td><button id="flipOrientationBtn" class="btn btn-danger" >Cambiar Orientación</button></td> 
+<td><button id="startPositionBtn" class="btn btn-primary" >Posición Inicial</button></td> 
+<td><button id="whiteOrientationBtn" class="btn btn-warning" >Blancas</button></td> 
+<td><button id="blackOrientationBtn" class="btn btn-info" >Negras</button></td> 
+<td><button id="move1Btn" class="btn btn-success" >e2-e4</button></td> 
+<td><button id="move2Btn" class="btn btn-primary" >d2-d4, g8-f6</button></td> 
+</tr>
+</table>
+<br>
+<table>
+<tr><td>Status: <span id="status"></span></td></tr>
+<tr><td>FEN:    <span id="fen"></span></td></tr>
+<tr><td>PGN:    <span id="pgn"></span></td></tr>
+</table>
+<hr>
+<table border="1">
+<tr>
+<td><div id="board2" style="width: 400px"></div></td>
+<td>
+<div style="clear:both"></div>
+</td>
+</tr>
+</table>
+
+<hr><h4>Chat de la Partida:</h4>
+<table>
+<tr>
+<td><div>Hola Leyre estás preparada para iniciar la partida ..........</div></td>
+<td><div>Si lo Estoy comencemos ..........</div></td>
+<td><div>perfecto..........</div></td>
+</tr>
+<tr>
+<td><div id="board3" style="width: 200px; float: left; margin-right: 10px"></div></td>
+<td><div id="board4" style="width: 200px; float: left; margin-right: 10px"></div></td>
+<td><div id="board5" style="width: 200px; float: left"></div></td>
+<td><div style="clear:both"></div></td>
+</tr>
+</table>
+
+
+</td>
+<td>
+<h4>Jugadores Activos:</h4>
+<b>Leyre</b><br>
+<b>Alfonso</b>
+</td>
+</tr>
+</table>
+</center>
+
+<script>
+var init = function() {
+  var board2 = ChessBoard('board2', {
+  draggable: true,
+  dropOffBoard: 'trash',
+  sparePieces: true
+}) 
+
+$('#startBtn').on('click', board2.start);
+$('#clearBtn').on('click', board2.clear);
+$('#destroyBtn').on('click', board2.destroy);
+$('#startPositionBtn').on('click', board2.start);
+
+$('#move1Btn').on('click', function() {
+  board2.move('e2-e4');
+});
+
+$('#move2Btn').on('click', function() {
+  board2.move('d2-d4', 'g8-f6');
+});
+
+$('#flipOrientationBtn').on('click', function() {
+ board2.flip;
+});
+
+$('#whiteOrientationBtn').on('click', function() {
+  board2.orientation('white');
+});
+
+$('#blackOrientationBtn').on('click', function() {
+ board2.orientation('black');
+});
+
+$('#showOrientationBtn').on('click', function() {
+  alert("Orientación Abajo las fichas: "+board2.orientation());
+});
+
+$('#posicionBtn').on('click', function() {
+  var fila=document.getElementById("fila").value;
+  var columna=document.getElementById("columna").value;
+  var fila1=document.getElementById("fila1").value;
+  var columna1=document.getElementById("columna1").value;
+  var cadena=columna+fila+"-"+columna1+fila1;
+  //alert("Posición: : "+cadena);
+  board2.move(cadena);
+});
+
+var onDragStart = function(source, piece, position, orientation) {
+  if (game.game_over() === true ||
+      (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+    return false;
+  }
+};
+
+var onDrop = function(source, target) {
+  // ver si el movimiento es legal 
+  var move = game.move({
+    from: source,
+    to: target,
+    promotion: 'q' // Siempre promover a una reina por simplicidad.
+  });
+
+  // movimiento ilegal
+  if (move === null) return 'snapback';
+
+  updateStatus();
+};
+
+// no recoger las piezas hasta que el juego haya terminado 
+var onDragStart = function(source, piece, position, orientation) {
+  if (game.game_over() === true ||
+      (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+    return false;
+  }
+};
+
+// actualizar la posición del tablero después de la pieza de ajuste Para enroque, en pasante, promoción de peones.
+var onSnapEnd = function() {
+  board2.position(game.fen());
+};
+
+var updateStatus = function() {
+  var status = '';
+/*
+  var moveColor = 'White';
+  if (game.turn() === 'b') {
+    moveColor = 'Black';
+  }
+*/
+  var moveColor = 'White';
+  if (game.turn() === 'b') {
+    moveColor = 'Black';
+	game.setTurn("b");
+  }else{
+    game.setTurn("w");
+  }
+	
+	
+	
+  // jakemate?
+  if (game.in_checkmate() === true) {
+    status = 'Game over, ' + moveColor + ' is in checkmate.';
+  }
+
+  // draw?
+  else if (game.in_draw() === true) {
+    status = 'Game over, drawn position';
+  }
+
+  // todavia hay juego
+  else {
+    status = moveColor + ' to move';
+
+    // jaque?
+    if (game.in_check() === true) {
+      status += ', ' + moveColor + ' is in check';
+    }
+  }
+
+  statusEl.html(status);
+  fenEl.html(game.fen());
+  pgnEl.html(game.pgn());
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+var board3 = ChessBoard('board3', {
+  position: 'start',
+  showNotation: false
+});
+
+var board4 = ChessBoard('board4', {
+  position: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R',
+  showNotation: false
+});
+
+var board5 = ChessBoard('board5', {
+  position: 'r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1',
+  showNotation: false
+});
+
+};//init
+
+$(document).ready(init); 
+</script>
+
+</body>
+</html>
+
+

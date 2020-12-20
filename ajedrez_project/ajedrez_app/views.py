@@ -47,6 +47,7 @@ from django.core import serializers
 from django.contrib.syndication.views import Feed #RSS
 import feedparser
 from django.views.decorators.csrf import csrf_exempt 
+from datetime import datetime
 
 		
 #indicamos a la vista que no verifique el token csrf con el decorador
@@ -61,15 +62,7 @@ def home(request):
 	print ("idusuario:::"+str(idusuario))
 	print ("autenticado=="+str(request.user.is_authenticated))
 	print ("is_active=="+str(request.user.is_active))
-	
-	contrincante1=str(User.objects.get(id=4))
-	contrincante2=str(User.objects.get(id=5))
-	contrincante3=str(User.objects.get(id=6))
-	
-	jugador1=str(User.objects.get(id=1))
-	jugador2=str(User.objects.get(id=2))
-	jugador3=str(User.objects.get(id=3))
-	
+
 	ganadas=0
 	perdidas=0
 	empatadas=0
@@ -161,11 +154,11 @@ def home(request):
 		print("Error al leer partidas")		
 			
 	room_name="publica" #la sala de chat pública del ajedrez
-	
+
 	context = { 'usuarios': usuarios,'ganadas': ganadas,'perdidas':perdidas,
-	'empatadas':empatadas, 'elo':elo, 'total':total, 'jugador1':jugador1,'jugador2':jugador2,'jugador3':jugador3,
-	'contrincante1':contrincante1,'contrincante2':contrincante2,'contrincante3':contrincante3, 'actual':actual, 
+	'empatadas':empatadas, 'elo':elo, 'total':total, 'actual':actual, 
 	'quitartableros':quitartableros,'federacion':federacion,'room_name': room_name,'numconectados':numconectados,'numpartidas':numpartidas}
+	
 	return render(request, 'home.html', context=context)
 	
 def about(request):
@@ -178,35 +171,14 @@ def configurar(request):
 	return render(request, 'configurar.html')
 
 def contrincante(request):
-	welo=0
-	welo1=0
-	if request.GET.get('elo'):
-		welo = request.GET.get('elo')	
-		print("elo***************="+str(elo))
-	if request.GET.get('elo1'):
-		welo1 = request.GET.get('elo1')		
-		print("elo1********************"+str(elo1))
-	
-	usuariocurrent=str(request.user)
-	contrincante=""
-	print("ACTUAL=["+str(usuariocurrent)+"]")
-	
 	username=request.user.username
 	idusuario=request.user.id
-	print("ojooooooo  "+username+"id="+str(idusuario))
+	print("NOMBRE USUARIO ACTIVO  "+username+" id="+str(idusuario))
 	jugador=Jugador.objects.get(user=idusuario) 
-
 	
-	#print("user=["+str(user)+"]")
+	#FILTRO DE LOS JUGADORES QUE HAN CREADO LA PARTIDA Y ESTÁN A LA ESPERA DE OPONENTE
 	usuarios=Jugador.objects.filter(conectado=True).filter(esperaoponente=True).exclude(user_id=idusuario).order_by('-elo') #descendente con  - , ascendente es sin signo (filter AND)
-	
-	for r in usuarios:
-		#request.session['contrincantes']=str(r.user.username)
-		contrincante=str(r.user.username)
-		request.session['contrincante']=str(r.user.username)
-		print("................>>>>>> CONTRINCANTE dentro del bucle "+str(contrincante))
-	print("................>>>>>> CONTRINCANTE fuera del bucle "+str(contrincante))
-	
+
 	#la paginacion
 	page = request.GET.get('page')
 	print ("pagina="+str(page))
@@ -221,7 +193,12 @@ def contrincante(request):
 	except EmptyPage:
 		usuarios = paginator.page(paginator.num_pages)
 	
-	return render(request, 'contrincante.html', {'usuarios':usuarios,'usuariocurrent':usuariocurrent,'contrincante':contrincante})	
+	context = {'usuarios': usuarios,
+	           'partidas':Partida.objects.all(),
+			   'nombreusuario':username,}
+	
+	
+	return render(request, 'contrincante.html', context)	
 
 def filtrocontrincante(request,template_name='contrincante.html'):
 	print("ENTRAAAA")
@@ -264,121 +241,255 @@ def filtrocontrincante(request,template_name='contrincante.html'):
 	
 	usuariocurrent=str(request.user)
 	
-	return render(request, 'contrincante.html', {'usuarios':usuarios,'usuariocurrent':usuariocurrent,'contrincante':contrincante})	
+	return render(request, 'contrincante.html', {'usuarios':usuarios})	
+	
+def jugar(request, idpartida, pcontrincante):
 
-	
-def jugar(request):
-	print('DIRECTORIO BASE_DIR para ESTATICO: '+str(settings.BASE_DIR))
-	print('DIRECTORIO ROOT para ESTATICO: '+str(settings.STATIC_ROOT))
-	print("DATOS EN JUGAR");
-	
+	fichas=""
+	partida=""
+	tiempo=""  #si/no
+	minutos="" #el tiempo
+	numpartida=0
+	chatid=1
+	partidas = Partida.objects.last() # LA ULTIMA QUE SE JUGO Y SI EXISTEN PARTIDAS
 	contrincante=""
+	creador=""
+	jugador1=None
+	jugador2=None
+	idjugador1=0
 
-	if 'elo' in request.session:
-		print("ELO2...."+str(request.session['elo']))	 
-	else:
-		request.session['elo']=1000
+	
+	print (str(pcontrincante))
+	if contrincante == None:
+		#SE QUEDA ESPERANDO EN SALA
+		partida = request.session['partida']
+		actual=request.user
+		idusuario=actual.id 
+		ojugador1=User.objects.get(id=idusuario)
+		creador=str(ojugador1.username)
+		print ("Creador: " + str(creador) + " contrincante " + str(pcontrincante))
 		
-	if 'contrincante' in request.session:	
-		contrincante=str(request.session['contrincante'])
-		print("contrincante...."+str(contrincante))
-	if 'fichas' in request.session:		
-		print("fichas...."+str(request.session['fichas']))
+		context = {'partida': partida, 'contrincante' : pcontrincante, 'creador' : creador,}
+		return render(request, 'jugar.html', context)
+	else:	
+		#ENTRA OPONENTE
+		actual=request.user
+		idusuario=actual.id 
+		jugador2=Jugador.objects.get(user=idusuario)
+		print("Id del contrincante: "+str(jugador2))
+		
+		idpartida = int(idpartida)
+		partida = Partida.objects.get(id=idpartida)
+		
+		print ("Id partida: "+str(partida.id))
+		print ("Num partida: "+str(partida.num_partida))
+		print ("Jugador1_id: "+str(partida.jugador1_id))
+		
+		partida.jugador2_id = jugador2
+		print ("Guardamos jugador 2")
+		print ("Jugador2_id: "+str(partida.jugador2_id))
+		print ("Jugador1_id: "+str(partida.jugador1_id))
+		partida.save()
+		
+		jugador1=partida.jugador1_id
+		print ("Jugador1 id===========: "+str(jugador1))
+		
+		ojugador1=User.objects.get(id=jugador1)
+		creador=str(ojugador1.username)
+		print ("Creador: " + str(creador) + " contrincante " + str(pcontrincante))
+		
+		
+		context = {'partida': partida,
+				   'contrincante' : pcontrincante,
+				   'creador' : creador,
+			       }
+		return render(request, 'jugar.html', context)
+
+			
+		
+def jugarcontrincante(request):
+	fichas=""
+	partida=""
+	tiempo=""  #si/no
+	minutos="" #el tiempo
+	numpartida=0
+	chatid=1
+	contrincante=""
+	jugador1=""
+	jugador2=""
+
+	#aqui no suma porque juega en la partida abierta por el jugador que ha abierto la partida
+	numpartida=int(request.session['numpartida'])
+
+	print("\n\n--------- JUGAR --partida ----"+str(numpartida)+"---- \n\n");
+	#entra aqui cuando se marcan los controles	
+
+	fichas = request.session['fichas']
+	if fichas=="blancas":
+		fichas="negras"
+		print("Fichas Negras "+str(fichas))
 	else:
-		request.session['fichas']='blancas'
-	if 'partida' in request.session:		
-		print("partida...."+str(request.session['partida']))
-	else:
-		request.session['partida']="publica"
-	if 'tiempo' in request.session:			
-		print("tiempo...."+str(request.session['tiempo']))
-	else:
-		request.session['tiempo']="no"
-	if 'estado' in request.session:			
-		print("estado...."+str(request.session['estado']))
-	else:
-		request.session['estado']=''
-	if 'minutos' in request.session:		
-		print("minutos...."+str(request.session['minutos']))
-	else:
-		request.session['minutos']="60"
-	print("REQUEST...."+str(request.path))
+		fichas="blancas"
+		print("Fichas Blancas "+str(fichas))
+		
+	partida=request.session['partida']
+	if partida=="privada":
+		partida = "publica"
+		print("partida "+str(partida))
+	else:	
+		partida = "privada"
+		print("partida "+str(partida))		
 	
-	minutos=0
-	tiempo=""
-	
-	tiempo=str(request.session['tiempo'])
-	if tiempo=="si":
-		minutos=request.session['minutos']
-	else:
-		minutos=0
-	
-	#comunicaciones con el posible contrincante
+	tiempo =request.session['tiempo']
+	if tiempo =="si":
+		print("tiempo "+str(tiempo))
+		minutos=str(request.session['minutos'])
+		print("minutos ***************="+str(minutos))
+
+	else:	
+		tiempo="no"
+		print("tiempo "+str(tiempo))	
+		minutos="8640000" #sin tiempo
+		request.session['minutos']=str(minutos) #los segundos que tiene 1 dia
+		print("minutos ***************="+str(minutos))
+
+		
+
+	contrincante=str(request.session['contrincante'])
+	print("contrincante ***************"+str(contrincante))	
+
+	jugador1=request.session['jugador1']
+	print("jugador1 ***************"+str(jugador1))	
+
+	jugador2=User.objects.get(username=contrincante)
+	print("jugador2 ***************"+str(jugador2))	
+
+	request.session['estado']="Preparado "+str(contrincante)
+		
+		
 	nombre=""
 	fen=""
 	request.path_info="/static/img/chesspieces/wikipedia/"
 	activarjuego=1
-	context = {'usuarios': Jugador.objects.all(),'contrincante': contrincante,
-	'elo':str(request.session['elo']),'partida':str(request.session['partida']),'tiempo':str(request.session['tiempo']),
-	'estado':str(request.session['estado']),'minutos':str(request.session['minutos']),'activarjuego':activarjuego, 'fen':fen}
+	
+	context = {'usuarios': Jugador.objects.all(),
+	'contrincante': contrincante,
+	'elo':str(request.session['elo']),
+	'partida':str(request.session['partida']),
+	'tiempo':str(request.session['tiempo']),
+	'estado':str(request.session['estado']),
+	'minutos':str(request.session['minutos']),
+	'fichas':str(request.session['fichas']),
+	'numpartida':str(request.session['numpartida']),
+	'jugador1':str(request.session['jugador1']),
+	'jugador2':str(request.session['jugador2']),
+	'activarjuego':activarjuego, 'fen':fen}
 	return render(request, 'jugar.html', context)	
 	
-	
 def configuracion(request):
-	print('DIRECTORIO BASE_DIR para ESTATICO: '+str(settings.BASE_DIR))
-	print('DIRECTORIO ROOT para ESTATICO: '+str(settings.STATIC_ROOT))
-	#return render(request, 'jugar_original.html')
-	#return render(request, 'jugar.html')
-	print("DATOS EN JUGAR");
 	
-	#OJO ANULADAS HOY 18/10/2020
+	print("\n\n ------------- MODO CONFIGURACION ------------------");
+	'''
 	print("ELO2...."+str(request.session['elo']))	
-	#print("contrincantes...."+str(request.session['contrincantes']))
+	print("contrincantes...."+str(request.session['contrincantes']))
 	print("fichas...."+str(request.session['fichas']))
 	print("partida...."+str(request.session['partida']))
 	print("tiempo...."+str(request.session['tiempo']))
 	print("estado...."+str(request.session['estado']))
 	print("minutos...."+str(request.session['minutos']))
 	print("REQUEST...."+str(request.path))
-	
-	minutos=0
-	tiempo=""
-	
-	tiempo=str(request.session['tiempo'])
-	if tiempo=="si":
-		minutos=request.session['minutos']
-	else:
-		minutos=0
-	
-	#comunicaciones con el posible contrincante
+	print("\n\n")
+	print("\n\n ------------- FIN CONFIGURACION");
 	'''
+	fichas=""
+	partida=""
+	tiempo=""  #si/no
+	minutos="" #el tiempo
+	numpartida=0
+	chatid=1
+	partidas = Partida.objects.last() # LA ULTIMA QUE SE JUGO Y SI EXISTEN PARTIDAS
+	jugador1=None
+	jugador2=None
+	
+	fichas = request.session['fichas']
+	if fichas=="blancas":
+		fichas="negras"
+		print("Fichas Negras "+str(fichas))
+	else:
+		fichas="blancas"
+		print("Fichas Blancas "+str(fichas))
+		
+	publicoprivado=request.session['partida']
+	if partida=="privada":
+		partida = "publica"
+		print("partida "+str(partida))
+	else:	
+		partida = "privada"
+		print("partida "+str(partida))		
+	
+	tiempo =request.session['tiempo']
+	if tiempo =="si":
+		print("tiempo "+str(tiempo))
+		minutos=str(request.session['minutos'])
+		print("minutos ***************="+str(minutos))
+
+	else:	
+		tiempo="no"
+		print("tiempo "+str(tiempo))	
+		minutos="8640000" #sin tiempo
+		request.session['minutos']=str(minutos) #los segundos que tiene 1 dia
+		print("minutos ***************="+str(minutos))
+
+	if (partidas == None):
+		numpartida = 1
+	else:
+		numpartida=partidas.num_partida+1
+		chatid=numpartida
+	
+	actual=request.user
+	creador = request.user.username
+	contrincante = ''
+	idusuario=actual.id 
+	jugador1=Jugador.objects.get(user=idusuario)
+	idjugador=jugador1.id
+
+	#almacenamos la partida
+	partida = Partida()
+	partida.num_partida=numpartida
+	partida.fecha_inicio = datetime.now()
+	partida.duracion=datetime.now()
+	partida.tiempo_establecido=datetime.now()
+	partida.chat_id=chatid
+	partida.jugador1 = jugador1
+	partida.jugador2 = None
+	partida.save()
+	print("registro OK \n")
+	
+	
+	partidas = Partida.objects.last()
+	numpartida=partidas.num_partida
+	print("numpartida  "+str(numpartida)+"\n")
+	request.session['numpartida']=str(numpartida)
+	request.session['estado']="Esperando respuesta de contrincante"
+	
+	
 	nombre=""
 	fen=""
-	if request.is_ajax():
-		if request.POST:
-			print("\n\n ======== AJAX ENTRA POST 2====================");
-			if request.POST.get('fen'):
-				fen = request.POST.get('fen') #table es una variable de javascript
-				print("fen==============="+str(fen))
-			if request.POST.get('nombre'):
-				nombre = request.POST.get('nombre') #table es una variable de javascript
-				print("nombre==============="+str(nombre))	
-			#return HttpResponse(json.dumps(data), content_type='application/json')
-			#return JsonResponse(data)
-		if request.GET:	
-			print("\n\n ======== AJAX ENTRA GET 2====================");
-	'''		
-	
 	request.path_info="/static/img/chesspieces/wikipedia/"
+	activarjuego=1
+	sala="sala"+str(chatid) #sala del chat privado
 	
-	contrincantes=str(request.session['contrincantes'])
-	print("contrincantes en configuracion...."+str('contrincantes'))
-	
-	context = {'usuarios': Jugador.objects.all(),'contrincante': contrincantes,
-	'elo':str(request.session['elo']),'partida':str(request.session['partida']),'tiempo':str(request.session['tiempo']),
-	'estado':str(request.session['estado']),'minutos':str(request.session['minutos'])}
+	context = {'usuarios': Jugador.objects.all(),
+	'contrincante': contrincante,
+	'tiempo':str(request.session['tiempo']),
+	'estado':str(request.session['estado']),
+	'minutos':str(request.session['minutos']),
+	'fichas':str(request.session['fichas']),
+	'activarjuego':activarjuego, 
+	'creador' : creador,
+	'partida':partida,}
 	return render(request, 'configuracion.html', context)		
-	
+
 #jugar contra la máquina
 def jugar1(request):
 	#nombre=str(User.objects.get(id=1))
@@ -397,9 +508,6 @@ def noticias(request):
 	return render(request, 'noticias.html')
 
 def ranking(request):
-	#context = {'usuarios': Jugador.objects.all()}
-	#return render(request, 'ranking.html', context)
-	#usuarios=Jugador.objects.filter(conectado=True).order_by('-elo') #descendente
 	usuarios=Jugador.objects.all().order_by('-elo')[:10] #descendente muestra los 10 primeros registros
 	return render(request, 'ranking.html', {'usuarios':usuarios})
 	
@@ -412,12 +520,7 @@ def busqueda(request):
 	return render(request, 'busqueda.html', context)
 	
 def solicitudes(request):
-	#print('DIRECTORIO BASE_DIR para ESTATICO: '+str(settings.BASE_DIR))
-	#print("DATOS EN JUGAR");
-	#print("ELO2...."+str(request.session['elo']))	
-	#context = {'usuarios': Jugador.objects.all(),'contrincante': str(request.session['contrincantes']),
-	#'elo':str(request.session['elo']),'partida':str(request.session['partida']),'tiempo':str(request.session['tiempo']),
-	#'estado':str(request.session['estado'])}
+
 	print ("--------SOLICITUDES---------------")	
 	print ("--------Jugadores---------------")	
 	print ("idjugador        Jugador   idusuario	conectado")	
@@ -426,28 +529,44 @@ def solicitudes(request):
 		print (str(r.id)+"                "+str(r.user.username)+"       "+str(r.user.id)+ "   "+str(r.conectado))	
 	
 	#SOLICITUDES
-	'''
-	id = models.AutoField(primary_key=True)
-	fecha_inicio = models.DateField("Fecha_Inicio",null=True,blank=True)
-	duracion=models.IntegerField()  # en segundos de la solicitud
-	ahora=models.DateTimeField()
-	aceptada=models.BooleanField()
-	cancelada=models.BooleanField()
-	jugador1 = models.ForeignKey(Jugador, related_name='solicita',null=True, blank=True,on_delete=models.PROTECT) #Realiza la petición o solicitud
-	jugador2 = models.ForeignKey(Jugador, related_name='responde',null=True, blank=True,on_delete=models.PROTECT) #recibe/responde a la petición o solicitud
-	partida=models.ForeignKey(Partida,related_name='partida',null=True, blank=True,on_delete=models.PROTECT) #requerido desde django 2.0
-	'''
+
 	context = {'usuarios': Jugador.objects.filter(conectado=True)}
 	return render(request, 'solicitudes.html', context)	
 	
 def enjuego(request):
-	#print('DIRECTORIO BASE_DIR para ESTATICO: '+str(settings.BASE_DIR))
-	#print("DATOS EN JUGAR");
-	#print("ELO2...."+str(request.session['elo']))	
-	#context = {'usuarios': Jugador.objects.all(),'contrincante': str(request.session['contrincantes']),
-	#'elo':str(request.session['elo']),'partida':str(request.session['partida']),'tiempo':str(request.session['tiempo']),
-	#'estado':str(request.session['estado'])}
-	context = {'usuarios': Jugador.objects.all()}
+	print("DATOS EN JUEGO");
+	numEspectadores=0
+	numconectados=0
+	listajugadores = Jugador.objects.all().order_by('id')
+	for r in listajugadores:
+		print (str(r.id)+"                "+str(r.user.username)+"       "+str(r.user.id)+ "   "+str(r.conectado))	
+		if r.conectado==True:
+			numconectados=numconectados+1
+
+	numEspectadores=numconectados			
+	contrincante=""
+	jugador1=""
+	jugador2=""
+	
+	print("Jugadores conectados::::::::::::::::::::::::"+str(numconectados))
+	print ("Partidas")	
+	partidas = Partida.objects.all().order_by('id')
+	try:
+		for r in partidas:
+			print (str(r.id)+" "+str(r.user.username)+"  "+str(r.num_partida)+ "   "+str(r.estado)+" jugador1="+str(r.jugador1)+" jugador 2="+str(r.jugador2))	
+			if r.estado=='C':  #conectado
+				numpartidas=numpartidas+1
+				#contrincante=str(request.session['contrincantes'])
+				contrincante=str(str(r.user.username))
+				jugador1=r.jugador1
+				jugador2=r.jugador2
+	except:
+		print("Error al leer partidas")		
+			
+	
+	context = {'usuarios': Jugador.objects.all()[1:2],'contrincante': contrincante,
+		'numEspectadores':numEspectadores,'jugador1':jugador1,'jugador2':jugador2,
+		'partidas': partidas,}
 	return render(request, 'partidasenjuego.html', context)	
 	
 def index(request):
@@ -494,9 +613,12 @@ def signup(request):
 			form.save(commit=True)
 			
 			try:
+			
+				ultimousuario=User.objects.last()
+				print("ultimo id usuario========"+str(ultimousuario.id))
 				usuarionuevo = Jugador()
-				#usuarionuevo.User_id=4
-				usuarionuevo.Federacion_id=3
+				usuarionuevo.user_id=ultimousuario.id
+				usuarionuevo.federacion_id=6
 				usuarionuevo.conectado=True
 				usuarionuevo.elo=800
 				usuarionuevo.ganadas=0
@@ -504,25 +626,12 @@ def signup(request):
 				usuarionuevo.empatadas = 0
 				usuarionuevo.numfederado = 122
 				usuarionuevo.anyosexperiencia=1
+				usuarionuevo.esperaoponente=False
 				usuarionuevo.save()
 				print ("registro guardado OK")	
 			except:	
 				print("Error al guardar el nuevo jugador")
 
-			'''
-			directorio = "/temp"
-			try:
-				os.stat(directorio)
-				print("el directorion existe")
-			except:
-				os.mkdir(directorio)
-				print("creando el directorio")
-			
-			archivo = open("/temp/reservas.txt","w")
-			registro=request.session['usuario']
-			archivo.write(registro)
-			archivo.close()
-			'''
 			return redirect('home')
 	else:
 		form= UserCreationForm()
@@ -565,21 +674,12 @@ def game_over(request):
         raise Http404	
 		
 def iniciarjuego(request):
-	print ("==========>>>>>>>INICIARJUEGO")	
-	'''
-	listajugadores = Jugador.objects.all().order_by('id')
-	for r in listajugadores:
-		r.conectado=False
-		esperaoponente=False
-		r.save()
-		print (str(r.id)+"                "+str(r.user.username)+"       "+str(r.user.id)+ "   "+str(r.conectado))	
-	'''
-	 
+	print ("==========>>>>>>>INICIAR JUEGO")	
+
 	if request.method == 'POST':
-		print ("\n\n\n==========>>>>>>>POST DE INICIARJUEGO")	
+		
 		request.session['elo']=request.POST.get('elo')
 		request.session['contrincantes']=request.POST.get('contrincantes')
-		print ("==========>>>>>>>CONTRINCANTES "+str(request.session['contrincantes']))	
 		request.session['fichas']=request.POST.get('fichas')
 		request.session['partida']=request.POST.get('partida')
 		request.session['tiempo']=request.POST.get('tiempo')
@@ -589,41 +689,43 @@ def iniciarjuego(request):
 			request.session['minutos']=request.POST.get('minutos')
 		else:	
 			request.session['minutos']="0"
-			
+		
+		
 		username = request.user.username
 		password = request.user.password
 		idusuario=request.user.id
-		print("ojooooooo logout "+username+"id="+str(idusuario))
-		jugador=Jugador.objects.get(user=idusuario) #usuario current por defecto si no existe uno concreto
+		jugador=Jugador.objects.get(user=idusuario)
+		
+		request.session['jugador1']=str(username)
 		print ("==idjugador="+str(idusuario))
 		jugador.esperaoponente=True
 		jugador.save()
 		print ("==espera oponente DESPUES="+str(jugador.esperaoponente))	
-	
-		#print("ELO...."+str(request.session['elo']))	
-		#print("contrincantes...."+str(request.session['contrincantes']))
-		#print("fichas...."+str(request.session['fichas']))
-		#print("partida...."+str(request.session['partida']))
-		#print("tiempo...."+str(request.session['tiempo']))
-		#print("estado...."+str(request.session['estado']))
-	
-		#context = {'usuarios': Jugador.objects.all()}
-		#return render(request, 'jugar.html', context)			
-	#return jugar(request) #es lo mismo que las 2 lineas de arriba
+		request.session['jugador1']=username
+		print("\n\n -----------------------")
+		
+		print("ELO...."+str(request.session['elo']))	
+		print("contrincantes...."+str(request.session['contrincantes']))
+		print("fichas...."+str(request.session['fichas']))
+		print("partida...."+str(request.session['partida']))
+		print("tiempo...."+str(request.session['tiempo']))
+		print("estado...."+str(request.session['estado']))
+		
 	if request.method == 'GET':
-		print ("==========>>>>>>>GET DE INICIARJUEGO")	
-		#request.session['contrincantes']=request.POST.get('contrincantes')
+		
+		print ("\n\n==========>>>>>>>GET DE INICIARJUEGO")	
 		print ("==========>>>>>>>GET DE INICIARJUEGO "+str(request.session['contrincantes']))	
+		
 		username = request.user.username
 		password = request.user.password
-		idusuario=request.user.id
+		idusuario=request.user.id		
 		print("ojooooooo logout "+username+ "clave="+str(password)+"id="+str(idusuario))
 		jugador=Jugador.objects.get(user=idusuario) #usuario current por defecto si no existe uno concreto
 		print ("==idjugador="+str(idusuario))
 		jugador.esperaoponente=True
 		jugador.save()
 		print ("==espera oponente DESPUES="+str(jugador.esperaoponente))
-	
+		
 	return configuracion(request) 
 
 def stream(request):
@@ -1010,6 +1112,15 @@ def canalRSS(request):
 	else:
 		feed = None
 	return render(request, "lector.html", {"feed" : feed,})
+	
+def canalAprende(request):
+
+	if request.GET.get("url"):
+		url=request.GET["url"] 
+		feed = feedparser.parse(url) #parseo del XML
+	else:
+		feed = None
+	return render(request, "canalaprende.html", {"feed" : feed,})	
 
 #indicamos a la vista que no verifique el token csrf con el decorador
 @csrf_exempt 	
